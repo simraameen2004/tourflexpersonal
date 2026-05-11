@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Profile - TOURFLEX</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head>
+<body>
+
+<div class="profile-container">
+    <div class="profile-banner"></div>
+
+    <div class="user-icon-wrapper">
+        <div class="user-icon">
+            <span th:if="${session.user.image == null}" th:text="${#strings.substring(session.user.name, 0, 1)}">S</span>
+            <img th:if="${session.user.image != null}" th:src="@{'/user/display/' + ${session.user.id}}" class="profile-img-circle">
+        </div>
+        <label for="imageUpload" class="edit-pencil">
+            <i class="fa-solid fa-pencil"></i>
+        </label>
+        <form id="uploadForm" th:action="@{/user/upload-image}" method="post" enctype="multipart/form-data">
+            <input type="file" id="imageUpload" name="profileImage" style="display: none;" onchange="this.form.submit()">
+        </form>
+    </div>
+
+    <h2 class="profile-name" th:text="${session.user.name}">Simra Ameen</h2>
+
+    <div class="profile-details-group">
+        <div class="detail-row"><i class="fa-solid fa-envelope"></i> <span th:text="${session.user.email}"></span></div>
+        <div class="detail-row"><i class="fa-solid fa-phone"></i> <span th:text="${session.user.phone}"></span></div>
+        <div class="detail-row"><i class="fa-solid fa-location-dot"></i> <span th:text="${session.user.address}"></span></div>
+    </div>
+
+    <div class="btn-group">
+        <a th:href="@{/user/edit}" class="btn btn-edit">Edit Profile</a>
+        <form th:action="@{/user/delete}" method="post" style="width: 100%;">
+            <button type="submit" class="btn btn-delete" onclick="return confirm('Delete account?')">Delete Account</button>
+        </form>
+        <a th:href="@{/user/logout}" class="btn btn-logout-outline">Logout</a>
+    </div>
+</div>
+
+</body>
+</html>

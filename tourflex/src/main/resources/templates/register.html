@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="logo">TOURFLEX</div>
+</div>
+
+<div class="form-container">
+    <h2>Create Account</h2>
+
+    <div th:if="${error}" style="color: red; background: #fee; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #f5c2c2;">
+        <p th:text="${error}" style="margin: 0;"></p>
+    </div>
+
+    <form th:action="@{/user/register}" method="post" onsubmit="return validateRegister()">
+
+        <input type="text" id="name" name="name" placeholder="Full Name" required>
+
+        <div class="form-group">
+            <input type="email" id="email" name="email" placeholder="Email" required>
+            <div id="emailError" class="error-msg" style="color: #db0101; font-size: 12px; display: none;"></div>
+        </div>
+
+        <div class="form-group">
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <div id="passwordError" class="error-msg" style="color: #db0101; font-size: 12px; display: none;"></div>
+        </div>
+
+        <div class="form-group">
+            <input type="text" id="phone" name="phone" placeholder="Phone Number (10 digits)" required>
+            <div id="phoneError" class="error-msg" style="color: #db0101; font-size: 12px; display: none;"></div>
+        </div>
+
+        <input type="text" id="address" name="address" placeholder="Residential Address" required>
+
+        <button class="btn">Register</button>
+    </form>
+</div>
+
+<script>
+    function validateRegister() {
+        // 1. Get the elements
+        let email = document.getElementById("email");
+        let password = document.getElementById("password");
+        let phone = document.getElementById("phone");
+
+        // 2. Get error message boxes
+        let emailError = document.getElementById("emailError");
+        let passwordError = document.getElementById("passwordError");
+        let phoneError = document.getElementById("phoneError");
+
+        // 3. Clear previous errors
+        emailError.style.display = "none";
+        passwordError.style.display = "none";
+        phoneError.style.display = "none";
+
+        let isValid = true;
+
+        // 4. Check Gmail
+        if (!email.value.trim().endsWith("@gmail.com")) {
+            emailError.innerText = "Only @gmail.com addresses are allowed.";
+            emailError.style.display = "block";
+            isValid = false;
+        }
+
+        // 5. Check Phone (10 digits)
+        if (phone.value.trim().length !== 10 || isNaN(phone.value.trim())) {
+            phoneError.innerText = "Phone number must be exactly 10 digits. start with 0";
+            phoneError.style.display = "block";
+            isValid = false;
+        }
+
+        // 6. Check Password Complexity (8+ chars, Letter, Number, Symbol)
+        let passRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$/;
+        if (!passRegex.test(password.value)) {
+            passwordError.innerText = "6+ characters with a mixture of letters, numbers, and symbols.";
+            passwordError.style.display = "block";
+            isValid = false;
+        }
+
+        // CRITICAL: If isValid is false, this 'return false' stops the page reload!
+        return isValid;
+    }
+</script>
+
+</body>
+</html>
+</html>
