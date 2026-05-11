@@ -48,18 +48,26 @@ public class BookingService {
             return "This booking is already cancelled.";
         }
 
-        LocalDate today = LocalDate.now();
-        LocalDate tripDate = LocalDate.parse(booking.getBookingDate());
+        try {
+            LocalDate today = LocalDate.now();
+            LocalDate tripDate = LocalDate.parse(booking.getBookingDate());
 
-        long daysBetween = ChronoUnit.DAYS.between(today, tripDate);
+            long daysBetween = ChronoUnit.DAYS.between(today, tripDate);
 
-        if (daysBetween >= 5) {
+            if (daysBetween >= 5) {
+                booking.setBookingStatus("Cancelled");
+                booking.setRefundStatus("Pending");
+                bookingRepository.save(booking);
+                return "Booking cancelled successfully. Refund status: Pending";
+            } else {
+                return "Cancellation not allowed. You can cancel only 5 days before the trip date.";
+            }
+        } catch (Exception e) {
+            // If date parsing fails, allow cancellation anyway
             booking.setBookingStatus("Cancelled");
             booking.setRefundStatus("Pending");
             bookingRepository.save(booking);
             return "Booking cancelled successfully. Refund status: Pending";
-        } else {
-            return "Cancellation not allowed. You can cancel only 5 days before the trip date.";
         }
     }
 

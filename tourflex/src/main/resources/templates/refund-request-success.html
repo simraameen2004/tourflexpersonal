@@ -1,51 +1,31 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>TOURFLEX - Refund Request Submitted</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            margin: 0;
-        }
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Refund Request Submitted - TOURFLEX')}"></head>
 
-        .container {
-            max-width: 700px;
-            background: white;
-            margin: 60px auto;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-            text-align: center;
-        }
+<body class="bg-surface text-on-background selection:bg-secondary-container selection:text-on-secondary-container min-h-screen flex flex-col">
 
-        h2 {
-            color: green;
-        }
+<!-- TopNavBar -->
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-        .btn {
-            display: inline-block;
-            margin-top: 20px;
-            background: #0d6efd;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-        }
+<div class="flex-1 flex items-center justify-center py-24 px-margin-mobile">
+    <div class="w-full max-w-xl bg-white p-8 md:p-12 rounded-3xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-outline-variant/20 mt-12 text-center">
+        
+        <div class="w-24 h-24 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-6 shadow-md border-4 border-blue-50">
+            <span class="material-symbols-outlined text-[50px]">currency_exchange</span>
+        </div>
+        
+        <h2 class="text-headline-md font-headline-md text-on-background mb-2">Request Submitted!</h2>
+        <p class="text-body-md text-on-surface-variant mb-8">Your refund request has been received and is now pending administrator review. You will be notified once processed.</p>
 
-        .btn:hover {
-            background: #0b5ed7;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h2>✅ Refund request submitted successfully!</h2>
-    <p>Your refund request is now pending admin review.</p>
-    <a href="/booking/my-bookings" class="btn">Back to My Bookings</a>
+        <a th:href="@{/booking/my-bookings}" class="inline-block bg-primary text-on-primary px-8 py-4 rounded-xl font-label-md font-bold hover:bg-primary-container transition-all shadow-md group">
+            Back to My Bookings
+        </a>
+        
+    </div>
 </div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 
 </body>
 </html>

@@ -38,8 +38,10 @@ public class BookingController {
             return "redirect:/user/login-page";
         }
 
+        User user = (User) session.getAttribute("user");
         TourPackage tourPackage = tourPackageRepository.findById(id).orElse(null);
         model.addAttribute("pkg", tourPackage);
+        model.addAttribute("loggedInUser", user);
         return "booking";
     }
 
@@ -53,8 +55,10 @@ public class BookingController {
             return "redirect:/user/login-page";
         }
 
+        User user = (User) session.getAttribute("user");
         CustomPackage customPackage = customPackageService.getCustomPackageById(id);
         model.addAttribute("customPkg", customPackage);
+        model.addAttribute("loggedInUser", user);
         return "booking-custom";
     }
 
@@ -129,22 +133,16 @@ public class BookingController {
     // LOGGED-IN USER CANCELS THEIR BOOKING
     @GetMapping("/cancel/{id}")
     public String cancelBooking(@PathVariable int id,
-                                Model model,
-                                HttpSession session) {
+                                HttpSession session,
+                                org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
 
         if (session.getAttribute("user") == null) {
             return "redirect:/user/login-page";
         }
 
-        User user = (User) session.getAttribute("user");
-
         String message = bookingService.cancelBooking(id);
-        List<Booking> bookings = bookingService.getBookingsByEmail(user.getEmail());
+        redirectAttributes.addFlashAttribute("message", message);
 
-        model.addAttribute("bookings", bookings);
-        model.addAttribute("loggedInEmail", user.getEmail());
-        model.addAttribute("message", message);
-
-        return "my-bookings";
+        return "redirect:/booking/my-bookings";
     }
 }

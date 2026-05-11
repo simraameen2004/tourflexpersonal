@@ -48,15 +48,15 @@ public class UserController {
             return "register";
         }
 
-        // Phone Validation (Must be exactly 10 digits)
-        if (phone.length() != 10 || !phone.matches("\\d+")) {
-            model.addAttribute("error", "Phone number must be exactly 10 digits.Start with 0");
+        // Phone Validation (Must be exactly 10 digits, start with 0)
+        if (phone.length() != 10 || !phone.matches("^0\\d{9}$")) {
+            model.addAttribute("error", "Phone number must be exactly 10 digits. Start with 0");
             return "register";
         }
 
         // Password validation (Letters + Numbers + Symbols)
         // requires: 1 Letter, 1 Number, 1 Symbol, and min 6 chars
-        String passRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{6,}$";
+        String passRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&]).{6,}$";
         if (!password.matches(passRegex)) {
             model.addAttribute("error", "Password must be 6+ characters with a mixture of letters, numbers, and symbols.");
             return "register";
@@ -76,7 +76,12 @@ public class UserController {
         user.setPhone(phone);
         user.setAddress(address);
 
-        userService.register(user);
+        try {
+            userService.register(user);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            model.addAttribute("error", "An account with this email or phone number already exists.");
+            return "register";
+        }
 
         model.addAttribute("message", "Registration successful! Please login.");
         return "login";
@@ -110,7 +115,14 @@ public class UserController {
         if (loggedInUser == null) {
             return "redirect:/user/login-page"; // Redirect if not logged in
         }
-        model.addAttribute("user", loggedInUser);
+        // Refresh user from DB to get latest data
+        Optional<User> freshUser = userService.findById(loggedInUser.getId());
+        if (freshUser.isPresent()) {
+            session.setAttribute("user", freshUser.get());
+            model.addAttribute("user", freshUser.get());
+        } else {
+            model.addAttribute("user", loggedInUser);
+        }
         return "profile"; //html
     }
 
@@ -156,15 +168,24 @@ public class UserController {
 
     @PostMapping("/update")
     public String updateUser(@ModelAttribute("user") User user, HttpSession session) {
+        User sessionUser = (User) session.getAttribute("user");
+        if (sessionUser != null) {
+            // Preserve the image from session since form doesn't send it
+            user.setImage(sessionUser.getImage());
+        }
         userService.updateUser(user);
         session.setAttribute("user", user); // Update
         return "redirect:/user/profile";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable int id, HttpSession session) {
-        userService.deleteUser(id);
-        session.invalidate();
+    // FIXED: Changed from GET to POST for delete operation
+    @PostMapping("/delete")
+    public String deleteUser(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            userService.deleteUser(user.getId());
+            session.invalidate();
+        }
         return "redirect:/"; // back to home page
     }
 

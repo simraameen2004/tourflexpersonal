@@ -1,63 +1,77 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Edit Custom Package</title>
-    <style>
-        body {
-            font-family: Arial;
-            background: #f4f6f8;
-        }
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Edit Custom Package - TOURFLEX')}"></head>
 
-        .container {
-            width: 60%;
-            margin: 40px auto;
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-        }
+<body class="bg-surface text-on-background selection:bg-secondary-container selection:text-on-secondary-container min-h-screen flex flex-col">
 
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-        }
+<!-- TopNavBar -->
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-        button {
-            padding: 10px 20px;
-            background: #0d6efd;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
+<div class="flex-1 flex items-center justify-center py-24 px-margin-mobile">
+    <div class="w-full max-w-lg bg-white p-10 rounded-3xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-outline-variant/20 mt-12">
+        <div class="text-center mb-8">
+            <h2 class="text-headline-md font-headline-md text-on-background">Edit Custom Package</h2>
+            <p class="text-body-md text-on-surface-variant mt-2">Update your travel preferences</p>
+        </div>
 
-<div class="container">
-    <h2>Edit Custom Package</h2>
+        <form action="/custom-package/update" method="post" class="flex flex-col gap-4">
+            <input type="hidden" name="id" th:value="${pkg.id}">
 
-    <form action="/custom-package/update" method="post">
+            <div>
+                <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Location</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">location_on</span>
+                    <input type="text" name="location" th:value="${pkg.location}" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl pl-12 pr-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" required>
+                </div>
+            </div>
 
-        <input type="hidden" name="id" th:value="${pkg.id}">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Days</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">schedule</span>
+                        <input type="number" name="numberOfDays" th:value="${pkg.numberOfDays}" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl pl-12 pr-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" required min="1">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">People</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">group</span>
+                        <input type="number" name="numberOfPeople" th:value="${pkg.numberOfPeople}" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl pl-12 pr-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" required min="1">
+                    </div>
+                </div>
+            </div>
 
-        <label>Location</label>
-        <input type="text" name="location" th:value="${pkg.location}" required>
+            <div>
+                <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Hotel</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">hotel</span>
+                    <input type="text" name="hotelName" th:value="${pkg.hotelName}" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl pl-12 pr-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" required>
+                </div>
+            </div>
 
-        <label>Number of Days</label>
-        <input type="number" name="numberOfDays" th:value="${pkg.numberOfDays}" required>
+            <div>
+                <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Transport</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">directions_car</span>
+                    <input type="text" name="transportType" th:value="${pkg.transportType}" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl pl-12 pr-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" required>
+                </div>
+            </div>
 
-        <label>Number of People</label>
-        <input type="number" name="numberOfPeople" th:value="${pkg.numberOfPeople}" required>
-
-        <label>Hotel</label>
-        <input type="text" name="hotelName" th:value="${pkg.hotelName}" required>
-
-        <label>Transport</label>
-        <input type="text" name="transportType" th:value="${pkg.transportType}" required>
-
-        <button type="submit">Update Package</button>
-    </form>
+            <div class="flex flex-col gap-3 mt-4">
+                <button type="submit" class="w-full bg-primary text-on-primary py-3.5 rounded-xl font-label-md hover:bg-primary-container transition-all shadow-md">
+                    Update Package
+                </button>
+                <a th:href="@{/custom-package/my}" class="w-full bg-surface-container-low text-on-surface-variant py-3.5 rounded-xl font-label-md hover:bg-surface-container-high transition-all text-center border border-outline-variant/30">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 
 </body>
 </html>

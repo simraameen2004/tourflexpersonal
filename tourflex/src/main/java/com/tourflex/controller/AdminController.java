@@ -8,6 +8,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 public class AdminController {
 
+    @GetMapping("")
+    public String adminRoot(HttpSession session) {
+        if (session.getAttribute("admin") != null) {
+            return "redirect:/admin/dashboard";
+        }
+        return "redirect:/admin/login";
+    }
+
     @GetMapping("/login")
     public String showAdminLoginPage() {
         return "admin-login";

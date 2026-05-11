@@ -1,197 +1,169 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>TOURFLEX - Reviews</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            margin: 0;
-        }
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Reviews - TOURFLEX')}"></head>
 
-        .navbar {
-            background: #0d6efd;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+<body class="bg-surface text-on-background selection:bg-secondary-container selection:text-on-secondary-container min-h-screen flex flex-col">
 
-        .navbar .logo {
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-        }
+<!-- TopNavBar -->
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            margin-left: 20px;
-            font-weight: bold;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 30px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-        }
-
-        h2 {
-            margin-top: 0;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-
-        textarea {
-            height: 100px;
-        }
-
-        .btn {
-            background: #0d6efd;
-            color: white;
-            padding: 10px 16px;
-            border: none;
-            cursor: pointer;
-            border-radius: 6px;
-        }
-
-        .btn:hover {
-            background: #0b5ed7;
-        }
-
-        .filter-box {
-            margin-top: 20px;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #eef3ff;
-            border-radius: 8px;
-        }
-
-        .message {
-            color: green;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .review-card {
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin-top: 15px;
-            border-radius: 8px;
-            background: #fafafa;
-        }
-
-        .actions a {
-            margin-right: 15px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .delete-link {
-            color: red;
-        }
-
-        .edit-link {
-            color: #0d6efd;
-        }
-    </style>
-</head>
-<body>
-
-<div class="navbar">
-    <div class="logo">TOURFLEX</div>
-    <div>
-        <a href="/">Home</a>
-        <a href="/user/register-page">Register</a>
-        <a href="/user/login-page">Login</a>
-        <a href="/packages/list">Packages</a>
-        <a href="/custom-package/create">Customize Package</a>
-        <a href="/custom-package/my">My Custom Packages</a>
-        <a href="/review/add-page">Reviews</a>
-        <a href="/booking/my-bookings">My Bookings</a>
+<div class="bg-primary pt-32 pb-16 px-margin-mobile">
+    <div class="max-w-[1280px] mx-auto text-center">
+        <h1 class="text-display-lg-mobile font-display-lg md:text-display-lg text-white mb-4">Traveler Reviews</h1>
+        <p class="text-body-lg text-white/80">Read experiences from fellow explorers or share your own.</p>
     </div>
 </div>
 
-<div class="container">
+<main class="flex-1 max-w-[1280px] mx-auto px-margin-desktop py-12 w-full">
 
-    <h2>Add Review</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        
+        <!-- Left Column: Add Review & Filter -->
+        <div class="lg:col-span-1 space-y-8">
+            
+            <!-- Add Review Form -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-outline-variant/20">
+                <h2 class="text-headline-sm text-primary mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary-container">rate_review</span> Write a Review
+                </h2>
+                
+                <div th:if="${message}" class="mb-4 bg-surface-container-high border-l-4 border-secondary-container text-on-surface p-3 rounded-r-lg text-sm font-semibold">
+                    <span th:text="${message}"></span>
+                </div>
 
-    <div class="message" th:if="${message}" th:text="${message}"></div>
+                <form action="/review/save" method="post" class="flex flex-col gap-4">
+                    <div>
+                        <label class="block text-[12px] uppercase tracking-wider text-on-surface-variant font-bold mb-1 ml-1">Name</label>
+                        <input type="text" name="customerName" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary outline-none transition-all text-sm" placeholder="Your Name" required th:value="${session.user != null ? session.user.name : ''}">
+                    </div>
+                    <div>
+                        <label class="block text-[12px] uppercase tracking-wider text-on-surface-variant font-bold mb-1 ml-1">Email</label>
+                        <input type="email" name="customerEmail" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary outline-none transition-all text-sm" placeholder="Your Email" required th:value="${session.user != null ? session.user.email : ''}">
+                    </div>
+                    <div>
+                        <label class="block text-[12px] uppercase tracking-wider text-on-surface-variant font-bold mb-1 ml-1">Package / Location</label>
+                        <input type="text" name="packageName" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary outline-none transition-all text-sm" placeholder="E.g. Ella Getaway" required>
+                    </div>
+                    <div>
+                        <label class="block text-[12px] uppercase tracking-wider text-on-surface-variant font-bold mb-1 ml-1">Rating</label>
+                        <select name="rating" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary outline-none transition-all text-sm font-semibold text-primary" required>
+                            <option value="">Select Rating</option>
+                            <option value="5">⭐⭐⭐⭐⭐ 5 - Excellent</option>
+                            <option value="4">⭐⭐⭐⭐ 4 - Very Good</option>
+                            <option value="3">⭐⭐⭐ 3 - Good</option>
+                            <option value="2">⭐⭐ 2 - Average</option>
+                            <option value="1">⭐ 1 - Poor</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[12px] uppercase tracking-wider text-on-surface-variant font-bold mb-1 ml-1">Review</label>
+                        <textarea name="comment" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all text-sm resize-none h-24" placeholder="Share details of your experience..." required></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-on-primary py-3 rounded-xl font-label-md font-bold hover:bg-primary-container transition-colors mt-2 shadow-sm">
+                        Submit Review
+                    </button>
+                </form>
+            </div>
 
-    <form action="/review/save" method="post">
-        <input type="text" name="customerName" placeholder="Your Name" required>
-        <input type="email" name="customerEmail" placeholder="Your Email" required>
-        <input type="text" name="packageName" placeholder="Package Name (Ella, Yala...)" required>
+            <!-- Filter Box -->
+            <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
+                <h3 class="text-label-md uppercase tracking-widest text-outline-variant font-bold mb-4 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[18px]">filter_list</span> Filter
+                </h3>
+                <form method="get" action="/review/add-page" class="flex flex-col gap-4">
+                    <div>
+                        <select name="sort" class="w-full bg-white border border-outline-variant/50 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-secondary-container">
+                            <option value="">Sort by Date</option>
+                            <option value="latest">Latest First</option>
+                            <option value="oldest">Oldest First</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select name="pkg" class="w-full bg-white border border-outline-variant/50 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-secondary-container">
+                            <option value="">All Destinations</option>
+                            <option value="Ella">Ella</option>
+                            <option value="Yala">Yala</option>
+                            <option value="Bentota">Bentota</option>
+                            <option value="Sigiriya">Sigiriya</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-surface-container-high text-on-surface py-2 rounded-lg text-sm font-bold hover:bg-surface-container-highest transition-colors">
+                        Apply Filter
+                    </button>
+                </form>
+            </div>
+            
+        </div>
 
-        <select name="rating" required>
-            <option value="">Select Rating</option>
-            <option value="5">5 - Excellent</option>
-            <option value="4">4 - Very Good</option>
-            <option value="3">3 - Good</option>
-            <option value="2">2 - Average</option>
-            <option value="1">1 - Poor</option>
-        </select>
+        <!-- Right Column: Reviews List -->
+        <div class="lg:col-span-2">
+            
+            <div th:if="${reviews == null or reviews.isEmpty()}" class="bg-white rounded-3xl p-12 text-center shadow-sm border border-outline-variant/20">
+                <span class="material-symbols-outlined text-outline text-6xl mb-4 opacity-50">reviews</span>
+                <h3 class="text-headline-sm text-on-surface mb-2">No reviews found</h3>
+                <p class="text-body-md text-on-surface-variant">Be the first to share your experience!</p>
+            </div>
 
-        <textarea name="comment" placeholder="Write your review here..." required></textarea>
+            <div class="flex flex-col gap-6">
+                <div th:each="r : ${reviews}" class="bg-white rounded-3xl p-6 md:p-8 shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant/20 transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] group relative overflow-hidden">
+                    
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-surface-container-highest to-transparent opacity-50 rounded-bl-full"></div>
 
-        <button type="submit" class="btn">Submit Review</button>
-    </form>
+                    <div class="flex justify-between items-start mb-4 relative z-10">
+                        <div>
+                            <div class="flex items-center gap-1 text-secondary-container mb-1">
+                                <span class="material-symbols-outlined text-[18px] filled" th:each="i : ${#numbers.sequence(1, r.rating)}">star</span>
+                                <span class="material-symbols-outlined text-[18px] text-outline-variant" th:if="${r.rating < 5}" th:each="i : ${#numbers.sequence(r.rating + 1, 5)}">star</span>
+                            </div>
+                            <h3 class="text-title-lg font-bold text-on-surface" th:text="${r.packageName}">Package Name</h3>
+                        </div>
+                        <div class="text-xs text-on-surface-variant font-medium bg-surface-container-lowest px-3 py-1 rounded-full border border-outline-variant/30 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">event</span> <span th:text="${r.reviewDate}">Date</span>
+                        </div>
+                    </div>
 
-    <!-- 🔥 FILTER SECTION -->
-    <div class="filter-box">
-        <h3>Filter Reviews</h3>
+                    <p class="text-body-lg text-on-surface-variant leading-relaxed italic mb-6 relative z-10">
+                        "<span th:text="${r.comment}"></span>"
+                    </p>
 
-        <form method="get" action="/review/add-page">
-            <label>Sort</label>
-            <select name="sort">
-                <option value="">None</option>
-                <option value="latest">Latest</option>
-                <option value="oldest">Oldest</option>
-            </select>
+                    <div class="flex items-center justify-between pt-4 border-t border-outline-variant/20 relative z-10">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-lg">
+                                <span th:text="${#strings.substring(r.customerName, 0, 1)}">A</span>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-on-surface" th:text="${r.customerName}">Name</div>
+                                <div class="text-[11px] text-on-surface-variant" th:text="${r.customerEmail}">Email</div>
+                            </div>
+                        </div>
 
-            <label>Package</label>
-            <select name="pkg">
-                <option value="">All Packages</option>
-                <option value="Ella">Ella</option>
-                <option value="Yala">Yala</option>
-                <option value="Bentota">Bentota</option>
-                <option value="Sigiriya">Sigiriya</option>
-            </select>
-
-            <button class="btn">Apply Filter</button>
-        </form>
-    </div>
-
-    <hr>
-
-    <h2>All Reviews</h2>
-
-    <div th:each="r : ${reviews}" class="review-card">
-        <b th:text="${r.packageName}"></b>
-        <p th:text="${r.comment}"></p>
-
-        <div>⭐ Rating: <span th:text="${r.rating}"></span>/5</div>
-        <div>👤 <span th:text="${r.customerName}"></span></div>
-        <div>📧 <span th:text="${r.customerEmail}"></span></div>
-        <div>📅 <span th:text="${r.reviewDate}"></span></div>
-
-        <div class="actions">
-            <a class="edit-link" th:href="@{'/review/edit/' + ${r.id}}">Edit</a>
-            <a class="delete-link" th:href="@{'/review/delete/' + ${r.id}}">Delete</a>
+                        <!-- Actions for owner -->
+                        <div class="flex gap-2" th:if="${session.user != null and session.user.email == r.customerEmail}">
+                            <a th:href="@{'/review/edit/' + ${r.id}}" class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center hover:bg-primary hover:text-white transition-colors shadow-sm" title="Edit">
+                                <span class="material-symbols-outlined text-[16px]">edit</span>
+                            </a>
+                            <a th:href="@{'/review/delete/' + ${r.id}}" class="w-8 h-8 rounded-full bg-error-container text-on-error-container flex items-center justify-center hover:bg-error hover:text-white transition-colors shadow-sm" title="Delete" onclick="return confirm('Delete your review?');">
+                                <span class="material-symbols-outlined text-[16px]">delete</span>
+                            </a>
+                        </div>
+                        
+                        <!-- Actions for Admin -->
+                        <div class="flex gap-2" th:if="${session.admin != null and session.user == null}">
+                            <a th:href="@{'/review/delete/' + ${r.id}}" class="px-3 py-1 rounded-lg bg-error-container text-on-error-container flex items-center justify-center hover:bg-error hover:text-white transition-colors shadow-sm text-xs font-bold" onclick="return confirm('Admin: Delete this review?');">
+                                <span class="material-symbols-outlined text-[14px] mr-1">delete</span> Remove
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
         </div>
     </div>
 
-</div>
+</main>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 
 </body>
 </html>

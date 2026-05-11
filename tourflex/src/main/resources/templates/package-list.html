@@ -1,175 +1,70 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>TOURFLEX - Packages</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            margin: 0;
-        }
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Packages - TOURFLEX')}"></head>
 
-        .navbar {
-            background: #0d6efd;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+<body class="bg-surface text-on-background selection:bg-secondary-container selection:text-on-secondary-container min-h-screen flex flex-col">
 
-        .navbar .logo {
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-        }
+<!-- TopNavBar -->
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-        .navbar .links a {
-            color: white;
-            text-decoration: none;
-            margin-left: 18px;
-            font-weight: bold;
-        }
-
-        h1 {
-            text-align: center;
-            margin: 30px 0 10px;
-        }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .card {
-            background: white;
-            width: 300px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-        }
-
-        .card img {
-            width: 100%;
-            height: 190px;
-            object-fit: cover;
-        }
-
-        .card-body {
-            padding: 15px;
-        }
-
-        .title {
-            font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .info {
-            margin: 6px 0;
-        }
-
-        .price {
-            color: green;
-            font-size: 20px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        .btn {
-            display: block;
-            text-align: center;
-            background: #0d6efd;
-            color: white;
-            padding: 10px;
-            margin-top: 15px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .btn:hover {
-            background: #0b5ed7;
-        }
-
-        .details-btn {
-            display: block;
-            text-align: center;
-            background: #6c757d;
-            color: white;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .details-btn:hover {
-            background: #5c636a;
-        }
-    </style>
-</head>
-<body>
-
-<div class="navbar">
-    <div class="logo">TOURFLEX</div>
-
-    <div class="links">
-        <a href="/">Home</a>
-        <a href="/packages/list">Packages</a>
-        <a href="/review/add-page">Reviews</a>
-
-        <span th:if="${session.user == null}">
-            <a href="/user/register-page">Register</a>
-            <a href="/user/login-page">Login</a>
-        </span>
-
-        <span th:if="${session.user != null}">
-            <a href="/custom-package/create">Customize Package</a>
-            <a href="/custom-package/my">My Custom Packages</a>
-            <a href="/booking/my-bookings">My Bookings</a>
-            <a href="/user/logout">Logout</a>
-        </span>
+<!-- Page Header -->
+<div class="bg-primary text-white pt-32 pb-16 px-margin-mobile">
+    <div class="max-w-[1280px] mx-auto text-center">
+        <h1 class="text-display-lg-mobile font-display-lg md:text-display-lg mb-4">Discover Our Packages</h1>
+        <p class="text-body-lg text-white/80 max-w-2xl mx-auto">Explore carefully curated tours across Sri Lanka designed for unforgettable experiences.</p>
     </div>
 </div>
 
-<h1>🌍 Available Tour Packages</h1>
+<main class="flex-1 max-w-[1280px] mx-auto px-margin-desktop py-16 w-full">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        
+        <div class="group bg-surface-container-lowest rounded-2xl overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-2 transition-all duration-300 border border-outline-variant/20 flex flex-col" th:each="pkg : ${packages}">
+            <div class="relative h-64 overflow-hidden">
+                <img th:src="@{'/images/' + ${pkg.imageName}}"
+                     th:alt="${pkg.location}"
+                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
 
-<div class="container">
-
-    <div class="card" th:each="pkg : ${packages}">
-        <img th:if="${pkg.imageName != null and !#strings.isEmpty(pkg.imageName)}"
-             th:src="@{'/images/' + ${pkg.imageName}}" alt="Uploaded Image">
-
-        <img th:if="${(pkg.imageName == null or #strings.isEmpty(pkg.imageName)) and pkg.location == 'Ella'}"
-             th:src="@{/images/ella.jpg}" alt="Ella">
-
-        <img th:if="${(pkg.imageName == null or #strings.isEmpty(pkg.imageName)) and pkg.location == 'Yala'}"
-             th:src="@{/images/yala.jpg}" alt="Yala">
-
-        <img th:if="${(pkg.imageName == null or #strings.isEmpty(pkg.imageName)) and pkg.location == 'Bentota'}"
-             th:src="@{/images/bentota.jpg}" alt="Bentota">
-
-        <img th:if="${(pkg.imageName == null or #strings.isEmpty(pkg.imageName)) and pkg.location == 'Sigiriya'}"
-             th:src="@{/images/sigiriya.jpg}" alt="Sigiriya">
-
-        <div class="card-body">
-            <div class="title" th:text="${pkg.name}"></div>
-            <div class="info">📍 <span th:text="${pkg.location}"></span></div>
-            <div class="info">🏷️ <span th:text="${pkg.category}"></span></div>
-            <div class="info">📅 Days: <span th:text="${pkg.days}"></span></div>
-            <div class="price">Rs. <span th:text="${pkg.price}"></span></div>
-
-            <a th:href="@{'/packages/details/' + ${pkg.id}}" class="details-btn">View Details</a>
-            <a th:href="@{'/booking/book/' + ${pkg.id}}" class="btn">Book Now</a>
+                <div class="absolute top-4 right-4 bg-secondary-container text-on-secondary-fixed px-3 py-1 rounded-full text-xs font-bold shadow-md" th:text="'LKR ' + ${pkg.price}">
+                    Rs. 0
+                </div>
+            </div>
+            
+            <div class="p-6 flex flex-col flex-1">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-headline-sm font-headline-sm text-primary" th:text="${pkg.name}">Package Name</h3>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="inline-flex items-center gap-1 bg-surface-container-high text-on-surface-variant px-2 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider">
+                        <span class="material-symbols-outlined text-[14px]">location_on</span> <span th:text="${pkg.location}">Location</span>
+                    </span>
+                    <span class="inline-flex items-center gap-1 bg-surface-container-high text-on-surface-variant px-2 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider">
+                        <span class="material-symbols-outlined text-[14px]">category</span> <span th:text="${pkg.category}">Category</span>
+                    </span>
+                </div>
+                
+                <div class="mt-auto pt-4 border-t border-outline-variant/20 flex items-center justify-between">
+                    <span class="flex items-center gap-1 text-[13px] text-on-surface-variant font-semibold">
+                        <span class="material-symbols-outlined text-sm">schedule</span> <span th:text="${pkg.days} + ' Days'">0 Days</span>
+                    </span>
+                </div>
+                
+                <div class="flex flex-col gap-2 mt-4">
+                    <a th:href="@{'/packages/details/' + ${pkg.id}}" class="w-full text-center bg-surface-container-high text-on-surface py-2 rounded-lg font-label-md hover:bg-surface-container-highest transition-colors">
+                        View Details
+                    </a>
+                    <a th:href="@{'/booking/book/' + ${pkg.id}}" class="w-full text-center bg-primary text-on-primary py-2 rounded-lg font-label-md hover:bg-primary-container transition-colors shadow-sm">
+                        Book Now
+                    </a>
+                </div>
+            </div>
         </div>
-    </div>
 
-</div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 
 </body>
 </html>

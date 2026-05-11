@@ -32,6 +32,16 @@ public class HomeController {
             }
         }
 
+        // If not enough booked packages, show all available packages
+        if (popularPackages.size() < 4) {
+            List<TourPackage> allPackages = tourPackageRepository.findAll();
+            for (TourPackage pkg : allPackages) {
+                if (!popularPackages.contains(pkg) && popularPackages.size() < 4) {
+                    popularPackages.add(pkg);
+                }
+            }
+        }
+
         model.addAttribute("popularPackages", popularPackages);
         return "home";
     }

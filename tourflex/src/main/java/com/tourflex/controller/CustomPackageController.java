@@ -20,26 +20,36 @@ public class CustomPackageController {
 
     // CREATE PAGE
     @GetMapping("/create")
-    public String showCreatePage(Model model) {
+    public String showCreatePage(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/user/login-page";
+        }
         model.addAttribute("pkg", new CustomPackage());
         return "custom-package";
     }
 
-    // SAVE NEW
+    // SAVE NEW — uses the price calculated on the frontend and passed via hidden field
     @PostMapping("/save")
-    public String savePackage(@ModelAttribute CustomPackage pkg, HttpSession session) {
+    public String savePackage(@ModelAttribute CustomPackage pkg,
+                              @RequestParam(required = false, defaultValue = "0") double calculatedPrice,
+                              HttpSession session) {
 
         if (session.getAttribute("user") == null) {
             return "redirect:/user/login-page";
         }
 
         User user = (User) session.getAttribute("user");
+        pkg.setCustomerName(user.getName());
         pkg.setCustomerEmail(user.getEmail());
 
-        double price = pkg.getNumberOfDays() * 5000
-                + pkg.getNumberOfPeople() * 2000;
-
-        pkg.setTotalPrice(price);
+        // Use the frontend-calculated price if provided, otherwise fallback
+        if (calculatedPrice > 0) {
+            pkg.setTotalPrice(calculatedPrice);
+        } else {
+            double price = pkg.getNumberOfDays() * 5000
+                    + pkg.getNumberOfPeople() * 2000;
+            pkg.setTotalPrice(price);
+        }
 
         customPackageService.savePackage(pkg);
 
@@ -66,7 +76,10 @@ public class CustomPackageController {
 
     // DELETE
     @GetMapping("/delete/{id}")
-    public String deletePackage(@PathVariable int id) {
+    public String deletePackage(@PathVariable int id, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/user/login-page";
+        }
         customPackageService.deletePackage(id);
         return "redirect:/custom-package/my";
     }
@@ -88,16 +101,25 @@ public class CustomPackageController {
 
     // UPDATE
     @PostMapping("/update")
-    public String updatePackage(@ModelAttribute CustomPackage pkg, HttpSession session) {
+    public String updatePackage(@ModelAttribute CustomPackage pkg,
+                                @RequestParam(required = false, defaultValue = "0") double calculatedPrice,
+                                HttpSession session) {
 
         if (session.getAttribute("user") == null) {
             return "redirect:/user/login-page";
         }
 
-        double price = pkg.getNumberOfDays() * 5000
-                + pkg.getNumberOfPeople() * 2000;
+        User user = (User) session.getAttribute("user");
+        pkg.setCustomerEmail(user.getEmail());
+        pkg.setCustomerName(user.getName());
 
-        pkg.setTotalPrice(price);
+        if (calculatedPrice > 0) {
+            pkg.setTotalPrice(calculatedPrice);
+        } else {
+            double price = pkg.getNumberOfDays() * 5000
+                    + pkg.getNumberOfPeople() * 2000;
+            pkg.setTotalPrice(price);
+        }
 
         customPackageService.savePackage(pkg);
 
