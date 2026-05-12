@@ -108,7 +108,7 @@
         <div class="hidden md:flex items-center gap-8 bg-white/10 backdrop-blur-md px-8 py-3 rounded-full border border-white/20 shadow-sm">
             <a th:href="@{/}" class="text-white font-label-md text-label-md hover:text-secondary-container transition-colors duration-300">Home</a>
             <a th:href="@{/packages/list}" class="text-white/80 font-label-md text-label-md hover:text-secondary-container transition-colors duration-300">Packages</a>
-            <a th:href="@{/custom-package/create}" class="text-white/80 font-label-md text-label-md hover:text-secondary-container transition-colors duration-300">Customize</a>
+            <a th:if="${session.user != null}" th:href="@{/custom-package/create}" class="text-white/80 font-label-md text-label-md hover:text-secondary-container transition-colors duration-300">Customize</a>
             <a th:if="${session.user != null}" th:href="@{/custom-package/my}" class="text-white/80 font-label-md text-label-md hover:text-secondary-container transition-colors duration-300">My Custom Packages</a>
             <a th:if="${session.user != null}" th:href="@{/booking/my-bookings}" class="text-white/80 font-label-md text-label-md hover:text-secondary-container transition-colors duration-300">My Bookings</a>
             <a th:href="@{/review/add-page}" class="text-white/80 font-label-md text-label-md hover:text-secondary-container transition-colors duration-300">Reviews</a>

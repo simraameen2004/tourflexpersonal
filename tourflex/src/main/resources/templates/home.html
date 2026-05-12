@@ -134,7 +134,7 @@
                         <span class="flex items-center gap-1.5 text-[12px] text-on-surface-variant/70 font-bold uppercase tracking-wider">
                             <span class="material-symbols-outlined text-[15px]">schedule</span> <span th:text="${pkg.days} + ' Days'">3 Days</span>
                         </span>
-                        <a th:href="@{'/booking/package/' + ${pkg.id}}" class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                        <a th:href="@{'/packages/details/' + ${pkg.id}}" class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
                             <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
                         </a>
                     </div>

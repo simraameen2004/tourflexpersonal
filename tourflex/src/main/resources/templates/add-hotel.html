@@ -7,12 +7,15 @@
 <!-- TopNavBar -->
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<div class="flex-1 flex items-center justify-center py-24 px-margin-mobile">
-    <div class="w-full max-w-2xl bg-white p-8 md:p-12 rounded-3xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-outline-variant/20 mt-12">
-        <div class="text-center mb-8">
-            <h2 class="text-headline-md font-headline-md text-on-background">Add New Hotel</h2>
-            <p class="text-body-md text-on-surface-variant mt-2">Add a new partner hotel to the database.</p>
-        </div>
+<div class="bg-primary pt-32 pb-16 px-margin-mobile">
+    <div class="max-w-[1280px] mx-auto text-center">
+        <h1 class="text-display-lg-mobile font-display-lg md:text-display-lg text-white mb-4">Add New Hotel</h1>
+        <p class="text-body-lg text-white/80">Add a new partner hotel to the database.</p>
+    </div>
+</div>
+
+<main class="flex-1 max-w-[1280px] mx-auto px-margin-desktop py-12 w-full flex items-center justify-center">
+    <div class="w-full max-w-2xl bg-white p-8 md:p-12 rounded-3xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-outline-variant/20">
 
         <form action="/hotel/save" method="post" class="flex flex-col gap-5">
             <div>
@@ -108,7 +111,7 @@
             </div>
         </form>
     </div>
-</div>
+</main>
 
 <!-- Footer -->
 <footer th:replace="~{fragments/layout :: footer}"></footer>

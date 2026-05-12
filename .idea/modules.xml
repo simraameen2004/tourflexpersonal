@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/tourflex/tourflex.iml" filepath="$PROJECT_DIR$/tourflex/tourflex.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/tourflexpersonal.iml" filepath="$PROJECT_DIR$/.idea/tourflexpersonal.iml" />
     </modules>
   </component>

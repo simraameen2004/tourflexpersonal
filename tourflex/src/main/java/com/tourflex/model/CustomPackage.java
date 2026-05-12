@@ -25,11 +25,17 @@ public class CustomPackage {
 
     private double totalPrice;
 
+    private String paymentStatus = "Unpaid";
+
     public CustomPackage() {
     }
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getCustomerName() {
@@ -118,5 +124,13 @@ public class CustomPackage {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 }

@@ -71,6 +71,7 @@ public class BookingController {
                               @RequestParam String packageName,
                               @RequestParam String location,
                               @RequestParam double totalPrice,
+                              @RequestParam(required = false, defaultValue = "0") int customPackageId,
                               Model model,
                               HttpSession session) {
 
@@ -90,6 +91,7 @@ public class BookingController {
         bookingService.saveBooking(booking);
 
         model.addAttribute("booking", booking);
+        model.addAttribute("customPackageId", customPackageId);
         return "booking-success";
     }
 

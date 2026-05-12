@@ -3,6 +3,7 @@ package com.tourflex.controller;
 import com.tourflex.model.Payment;
 import com.tourflex.model.SavedCard;
 import com.tourflex.model.User;
+import com.tourflex.service.CustomPackageService;
 import com.tourflex.service.PaymentService;
 import com.tourflex.service.SavedCardService;
 import jakarta.servlet.http.HttpSession;
@@ -23,8 +24,12 @@ public class PaymentController {
     @Autowired
     private SavedCardService savedCardService;
 
+    @Autowired
+    private CustomPackageService customPackageService;
+
     @GetMapping("/page")
     public String showPaymentPage(@RequestParam(required = false, defaultValue = "0") double amount,
+                                  @RequestParam(required = false, defaultValue = "0") int customPackageId,
                                   HttpSession session,
                                   Model model) {
 
@@ -38,6 +43,7 @@ public class PaymentController {
         model.addAttribute("savedCards", savedCards);
         model.addAttribute("loggedInUser", user);
         model.addAttribute("amount", amount);
+        model.addAttribute("customPackageId", customPackageId);
 
         return "payment";
     }
@@ -50,6 +56,7 @@ public class PaymentController {
                               @RequestParam String expiryDate,
                               @RequestParam String cvv,
                               @RequestParam double amount,
+                              @RequestParam(required = false, defaultValue = "0") int customPackageId,
                               Model model,
                               HttpSession session) {
 
@@ -68,6 +75,11 @@ public class PaymentController {
         payment.setPaymentStatus("Paid");
 
         paymentService.savePayment(payment);
+
+        // Mark the custom package as Paid so the list view shows the badge
+        if (customPackageId > 0) {
+            customPackageService.updatePaymentStatus(customPackageId, "Paid");
+        }
 
         model.addAttribute("payment", payment);
         model.addAttribute("message", "Payment successful!");

@@ -30,13 +30,20 @@
         <div th:each="pkg : ${packages}" class="bg-white rounded-3xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-outline-variant/20 overflow-hidden flex flex-col hover:-translate-y-2 transition-all duration-300 group">
             
             <div class="p-6 border-b border-outline-variant/20 relative">
-                <div class="absolute top-0 right-0 bg-secondary-container/20 text-secondary-container px-4 py-2 rounded-bl-2xl rounded-tr-3xl font-bold text-xs uppercase tracking-wider">
+
+                <!-- Status badge: PAID (green) or Custom Built (teal) -->
+                <div th:if="${pkg.paymentStatus == 'Paid'}"
+                     class="absolute top-0 right-0 bg-green-100 text-green-700 px-4 py-2 rounded-bl-2xl rounded-tr-3xl font-bold text-xs uppercase tracking-wider flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">verified</span> Paid
+                </div>
+                <div th:if="${pkg.paymentStatus != 'Paid'}"
+                     class="absolute top-0 right-0 bg-secondary-container/20 text-secondary-container px-4 py-2 rounded-bl-2xl rounded-tr-3xl font-bold text-xs uppercase tracking-wider">
                     Custom Built
                 </div>
-                
+
                 <h3 class="text-headline-sm font-headline-sm text-primary mb-1 mt-2" th:text="${pkg.location}">Location</h3>
                 <div class="text-2xl font-extrabold text-primary mb-4" th:text="'Rs. ' + ${pkg.totalPrice}">Rs. 0</div>
-                
+
                 <div class="flex flex-wrap gap-2 mb-2">
                     <span class="inline-flex items-center gap-1 bg-surface-container-low text-on-surface-variant px-3 py-1.5 rounded-lg text-[12px] font-semibold">
                         <span class="material-symbols-outlined text-[16px]">schedule</span> <span th:text="${pkg.numberOfDays} + ' Days'"></span>
@@ -63,12 +70,24 @@
             </div>
             
             <div class="p-4 bg-surface-container-low border-t border-outline-variant/20 flex gap-2">
-                <a th:href="@{'/booking/custom/' + ${pkg.id}}" class="flex-1 bg-secondary-container text-on-secondary-fixed py-2.5 rounded-xl font-label-md hover:bg-secondary-fixed transition-colors text-center shadow-sm font-bold">
+
+                <!-- Book button: hidden once paid -->
+                <a th:if="${pkg.paymentStatus != 'Paid'}" th:href="@{'/booking/custom/' + ${pkg.id}}" class="flex-1 bg-secondary-container text-on-secondary-fixed py-2.5 rounded-xl font-label-md hover:bg-secondary-fixed transition-colors text-center shadow-sm font-bold">
                     Book
                 </a>
-                <a th:href="@{'/custom-package/edit/' + ${pkg.id}}" class="flex-1 bg-white border border-outline-variant/50 text-on-surface py-2.5 rounded-xl font-label-md hover:bg-surface-container-lowest transition-colors text-center shadow-sm">
+                <span th:if="${pkg.paymentStatus == 'Paid'}" class="flex-1 bg-green-100 text-green-700 py-2.5 rounded-xl font-label-md text-center shadow-sm font-bold flex items-center justify-center gap-1">
+                    <span class="material-symbols-outlined text-[16px]">check_circle</span> Paid
+                </span>
+
+                <!-- Edit button: locked once paid -->
+                <a th:if="${pkg.paymentStatus != 'Paid'}" th:href="@{'/custom-package/edit/' + ${pkg.id}}" class="flex-1 bg-white border border-outline-variant/50 text-on-surface py-2.5 rounded-xl font-label-md hover:bg-surface-container-lowest transition-colors text-center shadow-sm">
                     Edit
                 </a>
+                <span th:if="${pkg.paymentStatus == 'Paid'}" class="flex-1 bg-surface-container-low text-outline py-2.5 rounded-xl font-label-md text-center shadow-sm cursor-not-allowed flex items-center justify-center gap-1 border border-outline-variant/30" title="Cannot edit a paid package">
+                    <span class="material-symbols-outlined text-[16px]">lock</span> Locked
+                </span>
+
+                <!-- Delete always available -->
                 <a th:href="@{'/custom-package/delete/' + ${pkg.id}}" onclick="return confirm('Are you sure you want to delete this custom package?');" class="bg-error-container text-on-error-container p-2.5 rounded-xl hover:bg-error-container/80 transition-colors shadow-sm flex items-center justify-center">
                     <span class="material-symbols-outlined">delete</span>
                 </a>

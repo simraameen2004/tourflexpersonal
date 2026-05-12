@@ -32,18 +32,20 @@ public class ReviewController {
         List<Review> reviews;
 
         if (pkg != null && !pkg.isEmpty()) {
-            reviews = reviewService.getReviewsByPackage(pkg);
+            reviews = reviewService.getReviewsByPackage(pkg, sort);
         } else if ("latest".equals(sort)) {
             reviews = reviewService.getLatestReviews();
         } else if ("oldest".equals(sort)) {
             reviews = reviewService.getOldestReviews();
         } else {
-            reviews = reviewService.getAllReviews();
+            // Default sort if nothing selected
+            reviews = reviewService.getLatestReviews();
         }
 
         model.addAttribute("reviews", reviews);
-        // Pass available packages for the dropdown
         model.addAttribute("packages", tourPackageService.getAllPackages());
+        model.addAttribute("currentSort", sort);
+        model.addAttribute("currentPkg", pkg);
         return "review";
     }
 

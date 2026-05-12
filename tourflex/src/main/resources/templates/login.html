@@ -19,10 +19,10 @@
 
         <form action="/user/login" method="post" onsubmit="return validateLogin()" class="flex flex-col gap-5">
             <div>
-                <label for="email" class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Email</label>
+                <label for="email" class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Email Address</label>
                 <div class="relative">
                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">mail</span>
-                    <input type="email" id="email" name="email" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl pl-12 pr-4 py-3.5 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-outline-variant" placeholder="name@example.com" required>
+                    <input type="email" id="email" name="email" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl pl-12 pr-4 py-3.5 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-outline-variant" placeholder="you@example.com" required>
                 </div>
             </div>
             
@@ -59,9 +59,9 @@
 
 <script>
     function validateLogin() {
-        let email = document.getElementById("email").value.trim();
+        let email = document.getElementById("email").value;
         if (!email.includes("@")) {
-            alert("Please enter a valid email address");
+            alert("Please enter a valid email address.");
             return false;
         }
         return true;

@@ -33,7 +33,7 @@
                 </thead>
                 <tbody class="divide-y divide-outline-variant/20">
                     <tr th:each="b : ${bookings}" class="hover:bg-surface-container-lowest transition-colors">
-                        <td class="py-4 px-6 text-sm font-semibold text-on-surface" th:text="${#strings.substring(b.id, 0, 8)} + '...'"></td>
+                        <td class="py-4 px-6 text-sm font-semibold text-on-surface" th:text="${b.id}"></td>
                         <td class="py-4 px-6">
                             <div class="text-sm font-bold text-on-surface" th:text="${b.customerName}"></div>
                             <div class="text-[12px] text-on-surface-variant" th:text="${b.customerEmail}"></div>

@@ -21,8 +21,8 @@
         <!-- Left Column: Add Review & Filter -->
         <div class="lg:col-span-1 space-y-8">
             
-            <!-- Add Review Form -->
-            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-outline-variant/20">
+            <!-- Add Review Form (Hidden for Admins) -->
+            <div th:if="${session.admin == null}" class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-outline-variant/20">
                 <h2 class="text-headline-sm text-primary mb-6 flex items-center gap-2">
                     <span class="material-symbols-outlined text-secondary-container">rate_review</span> Write a Review
                 </h2>
@@ -73,18 +73,18 @@
                 <form method="get" action="/review/add-page" class="flex flex-col gap-4">
                     <div>
                         <select name="sort" class="w-full bg-white border border-outline-variant/50 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-secondary-container">
-                            <option value="">Sort by Date</option>
-                            <option value="latest">Latest First</option>
-                            <option value="oldest">Oldest First</option>
+                            <option value="" th:selected="${currentSort == null or currentSort == ''}">Sort by Date</option>
+                            <option value="latest" th:selected="${currentSort == 'latest'}">Latest First</option>
+                            <option value="oldest" th:selected="${currentSort == 'oldest'}">Oldest First</option>
                         </select>
                     </div>
                     <div>
                         <select name="pkg" class="w-full bg-white border border-outline-variant/50 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-secondary-container">
-                            <option value="">All Destinations</option>
-                            <option value="Ella">Ella</option>
-                            <option value="Yala">Yala</option>
-                            <option value="Bentota">Bentota</option>
-                            <option value="Sigiriya">Sigiriya</option>
+                            <option value="" th:selected="${currentPkg == null or currentPkg == ''}">All Destinations</option>
+                            <option th:each="p : ${packages}" 
+                                    th:value="${p.name}" 
+                                    th:text="${p.name}"
+                                    th:selected="${currentPkg == p.name}">Package Name</option>
                         </select>
                     </div>
                     <button type="submit" class="w-full bg-surface-container-high text-on-surface py-2 rounded-lg text-sm font-bold hover:bg-surface-container-highest transition-colors">

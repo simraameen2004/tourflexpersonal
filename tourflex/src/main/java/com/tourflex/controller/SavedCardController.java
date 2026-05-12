@@ -21,6 +21,7 @@ public class SavedCardController {
                            @RequestParam String expiryDate,
                            @RequestParam String cardType,
                            @RequestParam(required = false, defaultValue = "0") double amount,
+                           @RequestParam(required = false, defaultValue = "0") int customPackageId,
                            HttpSession session) {
 
         if (session.getAttribute("user") == null) {
@@ -38,18 +39,19 @@ public class SavedCardController {
 
         savedCardService.saveCard(savedCard);
 
-        return "redirect:/payment/page?amount=" + amount;
+        return "redirect:/payment/page?amount=" + amount + "&customPackageId=" + customPackageId;
     }
 
     @GetMapping("/delete/{id}")
     public String deleteCard(@PathVariable int id,
                              @RequestParam(required = false, defaultValue = "0") double amount,
+                             @RequestParam(required = false, defaultValue = "0") int customPackageId,
                              HttpSession session) {
         if (session.getAttribute("user") == null) {
             return "redirect:/user/login-page";
         }
 
         savedCardService.deleteCard(id);
-        return "redirect:/payment/page?amount=" + amount;
+        return "redirect:/payment/page?amount=" + amount + "&customPackageId=" + customPackageId;
     }
 }

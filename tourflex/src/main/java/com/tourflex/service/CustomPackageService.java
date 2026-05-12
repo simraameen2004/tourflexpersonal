@@ -29,4 +29,13 @@ public class CustomPackageService {
     public CustomPackage getCustomPackageById(int id) {
         return customPackageRepository.findById(id).orElse(null);
     }
+
+    // Mark package as Paid after successful payment
+    public void updatePaymentStatus(int id, String status) {
+        CustomPackage pkg = customPackageRepository.findById(id).orElse(null);
+        if (pkg != null) {
+            pkg.setPaymentStatus(status);
+            customPackageRepository.save(pkg);
+        }
+    }
 }

@@ -51,7 +51,7 @@
                                     onclick="useSavedCard(this)">
                                 Use
                             </button>
-                            <a th:href="@{'/saved-card/delete/' + ${card.id}}"
+                            <a th:href="@{'/saved-card/delete/' + ${card.id} + '?amount=' + ${amount} + '&customPackageId=' + ${customPackageId}}"
                                class="bg-error-container text-on-error-container py-2 px-3 rounded-xl hover:bg-error-container/80 transition-colors flex items-center justify-center"
                                onclick="return confirm('Delete this card?');">
                                 <span class="material-symbols-outlined text-[18px]">delete</span>
@@ -68,6 +68,9 @@
                 </h3>
 
                 <form action="/saved-card/save" method="post" onsubmit="return validateSaveCard()" class="bg-surface-container-lowest border border-outline-variant/30 p-6 rounded-2xl shadow-sm">
+                    <!-- Carry the amount through so we return to the correct payment page -->
+                    <input type="hidden" name="amount" th:value="${amount}">
+                    <input type="hidden" name="customPackageId" th:value="${customPackageId}">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="md:col-span-2">
                             <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Card Holder Name</label>
@@ -142,6 +145,7 @@
                     </div>
 
                     <input type="hidden" name="amount" th:value="${amount}">
+                    <input type="hidden" name="customPackageId" th:value="${customPackageId}">
 
                     <button type="submit" class="w-full bg-primary text-on-primary py-4 rounded-xl font-label-md hover:bg-primary-container transition-all shadow-md mt-4 flex justify-center items-center gap-2">
                         <span class="material-symbols-outlined text-[20px]">lock</span> Pay <span th:text="'Rs. ' + ${amount}">Rs. 0</span>
