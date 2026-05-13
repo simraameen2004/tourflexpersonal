@@ -1,7 +1,9 @@
 package com.tourflex.controller;
 
+import com.tourflex.model.Booking;
 import com.tourflex.model.SavedCard;
 import com.tourflex.model.User;
+import com.tourflex.service.BookingService;
 import com.tourflex.service.SavedCardService;
 import com.tourflex.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -25,6 +28,9 @@ public class UserController {
 
     @Autowired
     private SavedCardService savedCardService;
+
+    @Autowired
+    private BookingService bookingService;
 
     // REGISTER PAGE
     @GetMapping("/register-page")
@@ -92,7 +98,7 @@ public class UserController {
         return "login";
     }
 
-    // LOGIN USER
+    // UNIFIED LOGIN - handles both admin and regular users
     @PostMapping("/login")
     public String loginUser(@RequestParam String email,
                             @RequestParam String password,
@@ -103,6 +109,13 @@ public class UserController {
             return "login";
         }
 
+        // Check admin credentials first
+        if (email.equals("admin") && password.equals("admin123")) {
+            session.setAttribute("admin", true);
+            return "redirect:/admin/dashboard";
+        }
+
+        // Regular user login
         User user = userService.login(email, password);
         if(user != null){
             session.setAttribute("user", user);
@@ -132,6 +145,18 @@ public class UserController {
         
         model.addAttribute("user", userToUse);
         model.addAttribute("savedCards", savedCardService.getCardsByEmail(userToUse.getEmail()));
+
+        // User's bookings for profile view
+        List<Booking> userBookings = bookingService.getBookingsByEmail(userToUse.getEmail());
+        model.addAttribute("userBookings", userBookings);
+
+        // Calculate total spent
+        double totalSpent = userBookings.stream()
+                .filter(b -> "Active".equals(b.getBookingStatus()))
+                .mapToDouble(Booking::getTotalPrice)
+                .sum();
+        model.addAttribute("totalSpent", totalSpent);
+        model.addAttribute("totalTrips", userBookings.size());
         
         return "profile"; //html
     }

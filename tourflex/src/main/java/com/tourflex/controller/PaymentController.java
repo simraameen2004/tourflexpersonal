@@ -89,7 +89,7 @@ public class PaymentController {
     @GetMapping("/list")
     public String showPayments(Model model, HttpSession session) {
         if (session.getAttribute("admin") == null) {
-            return "redirect:/admin/login";
+            return "redirect:/user/login-page";
         }
 
         model.addAttribute("payments", paymentService.getAllPayments());

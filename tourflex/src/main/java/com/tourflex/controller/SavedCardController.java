@@ -46,12 +46,19 @@ public class SavedCardController {
     public String deleteCard(@PathVariable int id,
                              @RequestParam(required = false, defaultValue = "0") double amount,
                              @RequestParam(required = false, defaultValue = "0") int customPackageId,
+                             @RequestParam(required = false, defaultValue = "payment") String from,
                              HttpSession session) {
         if (session.getAttribute("user") == null) {
             return "redirect:/user/login-page";
         }
 
         savedCardService.deleteCard(id);
+
+        // If deletion is from profile, redirect back to profile
+        if ("profile".equals(from)) {
+            return "redirect:/user/profile";
+        }
+
         return "redirect:/payment/page?amount=" + amount + "&customPackageId=" + customPackageId;
     }
 }

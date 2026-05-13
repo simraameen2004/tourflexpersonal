@@ -7,9 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -43,6 +46,44 @@ public class HomeController {
         }
 
         model.addAttribute("popularPackages", popularPackages);
+
+        // Pass all unique locations for search autocomplete
+        List<String> locations = tourPackageRepository.findAll().stream()
+                .map(TourPackage::getLocation)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+        model.addAttribute("allLocations", locations);
+
         return "home";
+    }
+
+    // REST API for live search suggestions
+    @GetMapping("/api/search-packages")
+    @ResponseBody
+    public List<TourPackage> searchPackages(
+            @RequestParam(required = false, defaultValue = "") String location,
+            @RequestParam(required = false, defaultValue = "0") int guests) {
+
+        List<TourPackage> all = tourPackageRepository.findAll();
+
+        return all.stream()
+                .filter(pkg -> location.isEmpty() ||
+                        pkg.getLocation().toLowerCase().contains(location.toLowerCase()) ||
+                        pkg.getName().toLowerCase().contains(location.toLowerCase()))
+                .filter(pkg -> guests <= 0 || pkg.getMaxPeople() >= guests)
+                .collect(Collectors.toList());
+    }
+
+    // REST API for location suggestions
+    @GetMapping("/api/locations")
+    @ResponseBody
+    public List<String> getLocations(@RequestParam(required = false, defaultValue = "") String q) {
+        return tourPackageRepository.findAll().stream()
+                .map(TourPackage::getLocation)
+                .distinct()
+                .filter(loc -> q.isEmpty() || loc.toLowerCase().contains(q.toLowerCase()))
+                .sorted()
+                .collect(Collectors.toList());
     }
 }

@@ -99,7 +99,7 @@ public class BookingController {
     @GetMapping("/list")
     public String showBookings(Model model, HttpSession session) {
         if (session.getAttribute("admin") == null) {
-            return "redirect:/admin/login";
+            return "redirect:/user/login-page";
         }
 
         model.addAttribute("bookings", bookingService.getAllBookings());
@@ -110,7 +110,7 @@ public class BookingController {
     @GetMapping("/delete/{id}")
     public String deleteBooking(@PathVariable int id, HttpSession session) {
         if (session.getAttribute("admin") == null) {
-            return "redirect:/admin/login";
+            return "redirect:/user/login-page";
         }
 
         bookingService.deleteBooking(id);
