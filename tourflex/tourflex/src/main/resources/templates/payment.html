@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Payment - TOURFLEX')}"></head>
+
+<body class="bg-surface text-on-background selection:bg-secondary-container selection:text-on-secondary-container min-h-screen flex flex-col">
+
+<!-- TopNavBar -->
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="bg-primary pt-32 pb-16 px-margin-mobile">
+    <div class="max-w-[800px] mx-auto text-center">
+        <h1 class="text-display-lg-mobile font-display-lg md:text-display-lg text-white mb-4">Secure Payment</h1>
+        <p class="text-body-lg text-white/80">Complete your booking securely.</p>
+    </div>
+</div>
+
+<main class="flex-1 max-w-[800px] mx-auto px-margin-mobile py-12 w-full -mt-10 relative z-10">
+    <div class="bg-white rounded-3xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-outline-variant/20 overflow-hidden">
+        
+        <div class="bg-surface-container-low p-6 md:p-8 flex justify-between items-center border-b border-outline-variant/30">
+            <div>
+                <div class="text-label-md text-outline uppercase tracking-widest font-bold mb-1">Amount Due</div>
+                <div class="text-3xl font-extrabold text-primary" th:text="'Rs. ' + ${amount}">Rs. 0</div>
+            </div>
+            <span class="material-symbols-outlined text-4xl text-outline-variant opacity-50">lock</span>
+        </div>
+
+        <div class="p-6 md:p-8">
+            <!-- SAVED CARDS -->
+            <div th:if="${savedCards != null and !savedCards.isEmpty()}" class="mb-10">
+                <h3 class="text-headline-sm text-primary mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary-container">credit_card</span> Saved Cards
+                </h3>
+                
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="bg-surface-container-lowest border border-outline-variant/50 p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-sm" th:each="card : ${savedCards}">
+                        <div>
+                            <div class="font-bold text-on-surface mb-1 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[18px] text-outline">credit_score</span>
+                                <span th:text="${card.maskedCardNumber}"></span>
+                            </div>
+                            <div class="text-sm text-on-surface-variant font-medium" th:text="${card.cardHolderName}"></div>
+                        </div>
+                        
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <button type="button"
+                                    class="flex-1 sm:flex-none bg-surface-container-high text-on-surface py-2 px-4 rounded-xl font-label-md hover:bg-surface-container-highest transition-colors font-semibold"
+                                    th:attr="data-holder=${card.cardHolderName},
+                                             data-number=${card.cardNumber},
+                                             data-expiry=${card.expiryDate}"
+                                    onclick="useSavedCard(this)">
+                                Use
+                            </button>
+                            <a th:href="@{'/saved-card/delete/' + ${card.id} + '?amount=' + ${amount} + '&customPackageId=' + ${customPackageId}}"
+                               class="bg-error-container text-on-error-container py-2 px-3 rounded-xl hover:bg-error-container/80 transition-colors flex items-center justify-center"
+                               onclick="return confirm('Delete this card?');">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SAVE CARD -->
+            <div class="mb-10 border-t border-outline-variant/30 pt-8" th:if="${savedCards == null or savedCards.isEmpty() or true}">
+                <h3 class="text-headline-sm text-primary mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary-container">add_card</span> Add New Card
+                </h3>
+
+                <form action="/saved-card/save" method="post" onsubmit="return validateSaveCard()" class="bg-surface-container-lowest border border-outline-variant/30 p-6 rounded-2xl shadow-sm">
+                    <!-- Carry the amount through so we return to the correct payment page -->
+                    <input type="hidden" name="amount" th:value="${amount}">
+                    <input type="hidden" name="customPackageId" th:value="${customPackageId}">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Card Holder Name</label>
+                            <input type="text" id="saveName" name="cardHolderName" class="w-full bg-white border border-outline-variant/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" placeholder="John Doe" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Card Number</label>
+                            <input type="text" id="saveNumber" name="cardNumber" class="w-full bg-white border border-outline-variant/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" placeholder="0000 0000 0000 0000" required>
+                        </div>
+                        <div>
+                            <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Expiry Date</label>
+                            <input type="text" id="saveExpiry" name="expiryDate" class="w-full bg-white border border-outline-variant/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" placeholder="MM/YY" required>
+                        </div>
+                        <div>
+                            <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Card Type</label>
+                            <select name="cardType" class="w-full bg-white border border-outline-variant/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" required>
+                                <option value="">Select</option>
+                                <option value="Visa">Visa</option>
+                                <option value="MasterCard">MasterCard</option>
+                                <option value="Amex">Amex</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full mt-6 bg-surface-container-high text-on-surface py-3 rounded-xl font-label-md hover:bg-surface-container-highest transition-colors border border-outline-variant/30 font-bold">
+                        Save Card for Future
+                    </button>
+                </form>
+            </div>
+
+            <!-- PAYMENT -->
+            <div class="border-t border-outline-variant/30 pt-8">
+                <h3 class="text-headline-sm text-primary mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary-container">payments</span> Payment Details
+                </h3>
+
+                <form action="/payment/save" method="post" onsubmit="return validatePayment()" class="flex flex-col gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Customer Name</label>
+                            <input type="text" id="custName" name="customerName" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" placeholder="Your Name" th:value="${loggedInUser.name}" required>
+                        </div>
+                        <div>
+                            <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Customer Email</label>
+                            <input type="email" id="custEmail" name="customerEmail" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" placeholder="name@example.com" th:value="${loggedInUser.email}" required>
+                        </div>
+                    </div>
+
+                    <div class="bg-surface-container-low border border-outline-variant/30 p-6 rounded-2xl mt-2">
+                        <div class="mb-4">
+                            <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Name on Card</label>
+                            <input type="text" id="cardHolderName" name="cardHolderName" class="w-full bg-white border border-outline-variant/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all" placeholder="John Doe" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Card Number</label>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">credit_card</span>
+                                <input type="text" id="cardNumber" name="cardNumber" class="w-full bg-white border border-outline-variant/50 rounded-xl pl-12 pr-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all tracking-widest font-mono" placeholder="0000 0000 0000 0000" required>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Expiry</label>
+                                <input type="text" id="expiryDate" name="expiryDate" class="w-full bg-white border border-outline-variant/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all font-mono" placeholder="MM/YY" required>
+                            </div>
+                            <div>
+                                <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">CVV</label>
+                                <input type="password" id="cvv" name="cvv" class="w-full bg-white border border-outline-variant/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all font-mono" placeholder="•••" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="amount" th:value="${amount}">
+                    <input type="hidden" name="customPackageId" th:value="${customPackageId}">
+
+                    <button type="submit" class="w-full bg-primary text-on-primary py-4 rounded-xl font-label-md hover:bg-primary-container transition-all shadow-md mt-4 flex justify-center items-center gap-2">
+                        <span class="material-symbols-outlined text-[20px]">lock</span> Pay <span th:text="'Rs. ' + ${amount}">Rs. 0</span>
+                    </button>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script>
+    function useSavedCard(btn) {
+        document.getElementById("cardHolderName").value = btn.getAttribute("data-holder");
+        document.getElementById("cardNumber").value = btn.getAttribute("data-number");
+        document.getElementById("expiryDate").value = btn.getAttribute("data-expiry");
+        
+        // Highlight inputs briefly to show they were filled
+        ['cardHolderName', 'cardNumber', 'expiryDate'].forEach(id => {
+            const el = document.getElementById(id);
+            el.classList.add('ring-2', 'ring-secondary-container');
+            setTimeout(() => el.classList.remove('ring-2', 'ring-secondary-container'), 1000);
+        });
+        
+        document.getElementById("cvv").focus();
+    }
+
+    function validateSaveCard() {
+        let name = document.getElementById("saveName").value.trim();
+        let number = document.getElementById("saveNumber").value.trim();
+        let expiry = document.getElementById("saveExpiry").value.trim();
+
+        let namePattern = /^[A-Za-z ]+$/;
+        let cardPattern = /^[0-9]{16}$/;
+        let expiryPattern = /^(0[1-9]|1[0-2])\/\d{2}$/;
+
+        if (!namePattern.test(name)) {
+            alert("Name must contain only letters");
+            return false;
+        }
+
+        if (!cardPattern.test(number)) {
+            alert("Card number must be exactly 16 digits");
+            return false;
+        }
+
+        if (!expiryPattern.test(expiry)) {
+            alert("Expiry must be MM/YY format");
+            return false;
+        }
+
+        return true;
+    }
+
+    function validatePayment() {
+        let name = document.getElementById("custName").value.trim();
+        let email = document.getElementById("custEmail").value.trim();
+        let number = document.getElementById("cardNumber").value.trim();
+        let expiry = document.getElementById("expiryDate").value.trim();
+        let cvv = document.getElementById("cvv").value.trim();
+
+        let namePattern = /^[A-Za-z ]+$/;
+        let cardPattern = /^[0-9]{16}$/;
+        let expiryPattern = /^(0[1-9]|1[0-2])\/\d{2}$/;
+        let cvvPattern = /^[0-9]{3}$/;
+
+        if (!namePattern.test(name)) {
+            alert("Invalid name");
+            return false;
+        }
+
+        if (!email.includes("@")) {
+            alert("Invalid email");
+            return false;
+        }
+
+        if (!cardPattern.test(number)) {
+            alert("Card must be 16 digits");
+            return false;
+        }
+
+        if (!expiryPattern.test(expiry)) {
+            alert("Expiry format MM/YY");
+            return false;
+        }
+
+        if (!cvvPattern.test(cvv)) {
+            alert("CVV must be 3 digits");
+            return false;
+        }
+
+        return true;
+    }
+</script>
+
+</body>
+</html>
