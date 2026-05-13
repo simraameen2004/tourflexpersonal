@@ -27,9 +27,13 @@ public class PaymentController {
     @Autowired
     private CustomPackageService customPackageService;
 
+    @Autowired
+    private com.tourflex.service.BookingService bookingService;
+
     @GetMapping("/page")
     public String showPaymentPage(@RequestParam(required = false, defaultValue = "0") double amount,
                                   @RequestParam(required = false, defaultValue = "0") int customPackageId,
+                                  @RequestParam(required = false, defaultValue = "0") int bookingId,
                                   HttpSession session,
                                   Model model) {
 
@@ -44,6 +48,7 @@ public class PaymentController {
         model.addAttribute("loggedInUser", user);
         model.addAttribute("amount", amount);
         model.addAttribute("customPackageId", customPackageId);
+        model.addAttribute("bookingId", bookingId);
 
         return "payment";
     }
@@ -57,6 +62,7 @@ public class PaymentController {
                               @RequestParam String cvv,
                               @RequestParam double amount,
                               @RequestParam(required = false, defaultValue = "0") int customPackageId,
+                              @RequestParam(required = false, defaultValue = "0") int bookingId,
                               Model model,
                               HttpSession session) {
 
@@ -80,6 +86,10 @@ public class PaymentController {
         if (customPackageId > 0) {
             customPackageService.updatePaymentStatus(customPackageId, "Paid");
         }
+        
+        if (bookingId > 0) {
+            bookingService.updateBookingStatus(bookingId, "Paid");
+        }
 
         model.addAttribute("payment", payment);
         model.addAttribute("message", "Payment successful!");
@@ -89,7 +99,7 @@ public class PaymentController {
     @GetMapping("/list")
     public String showPayments(Model model, HttpSession session) {
         if (session.getAttribute("admin") == null) {
-            return "redirect:/user/login-page";
+            return "redirect:/admin/login";
         }
 
         model.addAttribute("payments", paymentService.getAllPayments());

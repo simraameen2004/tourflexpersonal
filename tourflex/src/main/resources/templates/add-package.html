@@ -93,9 +93,9 @@
             <div class="border-t border-outline-variant/20 pt-6">
                 <label class="block text-label-md text-on-surface-variant mb-1.5 ml-1">Package Cover Image</label>
                 <div class="w-full bg-surface-container-lowest border-2 border-dashed border-outline-variant/50 rounded-xl px-4 py-8 text-center hover:bg-surface-container-low transition-colors relative cursor-pointer">
-                    <span class="material-symbols-outlined text-[32px] text-outline mb-2">add_photo_alternate</span>
-                    <div class="text-sm font-semibold text-primary">Click to browse or drag image here</div>
-                    <input type="file" name="imageFile" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" required>
+                    <span id="add-pkg-icon" class="material-symbols-outlined text-[32px] text-outline mb-2 transition-colors">add_photo_alternate</span>
+                    <div id="add-pkg-text" class="text-sm font-semibold text-primary">Click to browse or drag image here</div>
+                    <input type="file" name="imageFile" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" required onchange="if(this.files.length > 0) { document.getElementById('add-pkg-text').textContent = 'Selected: ' + this.files[0].name; document.getElementById('add-pkg-icon').textContent = 'image'; document.getElementById('add-pkg-icon').classList.add('text-secondary-container'); } else { document.getElementById('add-pkg-text').textContent = 'Click to browse or drag image here'; document.getElementById('add-pkg-icon').textContent = 'add_photo_alternate'; document.getElementById('add-pkg-icon').classList.remove('text-secondary-container'); }">
                 </div>
             </div>
 

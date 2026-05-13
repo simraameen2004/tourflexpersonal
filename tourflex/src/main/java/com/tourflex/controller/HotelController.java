@@ -20,7 +20,7 @@ public class HotelController {
     @GetMapping("/add-page")
     public String showAddHotelPage(HttpSession session) {
         if (session.getAttribute("admin") == null) {
-            return "redirect:/user/login-page";
+            return "redirect:/admin/login";
         }
         return "add-hotel";
     }
@@ -32,7 +32,7 @@ public class HotelController {
                             HttpSession session) {
 
         if (session.getAttribute("admin") == null) {
-            return "redirect:/user/login-page";
+            return "redirect:/admin/login";
         }
 
         Hotel hotel = new Hotel();
@@ -47,7 +47,7 @@ public class HotelController {
     @GetMapping("/manage")
     public String manageHotels(Model model, HttpSession session) {
         if (session.getAttribute("admin") == null) {
-            return "redirect:/user/login-page";
+            return "redirect:/admin/login";
         }
 
         model.addAttribute("hotels", hotelService.getAllHotels());
@@ -57,7 +57,7 @@ public class HotelController {
     @GetMapping("/delete/{id}")
     public String deleteHotel(@PathVariable int id, HttpSession session) {
         if (session.getAttribute("admin") == null) {
-            return "redirect:/user/login-page";
+            return "redirect:/admin/login";
         }
 
         hotelService.deleteHotel(id);

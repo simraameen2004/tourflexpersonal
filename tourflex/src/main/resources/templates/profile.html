@@ -188,8 +188,7 @@
                     </div>
                     <!-- Delete button -->
                     <a th:href="@{'/saved-card/delete/' + ${card.id} + '?from=profile'}"
-                       onclick="return confirm('Are you sure you want to remove this card?');"
-                       class="absolute top-3 right-3 w-8 h-8 bg-white/10 hover:bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all backdrop-blur-sm"
+                       class="absolute top-3 right-3 w-8 h-8 bg-white/10 hover:bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all backdrop-blur-sm btn-delete-card"
                        title="Remove Card">
                         <span class="material-symbols-outlined text-[16px]">close</span>
                     </a>
@@ -266,8 +265,8 @@
                 </h2>
                 <p class="text-sm text-on-surface-variant mb-6">Permanently delete your account and all associated data. This action cannot be undone.</p>
                 <form th:action="@{/user/delete}" method="post" class="m-0">
-                    <button type="submit" class="inline-flex items-center gap-2 bg-error text-on-error px-6 py-3 rounded-xl font-label-md hover:bg-error/80 transition-all shadow-md font-bold"
-                            onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.')">
+                    <button type="button" class="inline-flex items-center gap-2 bg-error text-on-error px-6 py-3 rounded-xl font-label-md hover:bg-error/80 transition-all shadow-md font-bold"
+                            id="btn-delete-account">
                         <span class="material-symbols-outlined text-[18px]">delete_forever</span> Delete Account
                     </button>
                 </form>
@@ -279,6 +278,8 @@
 <!-- Footer -->
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     function switchTab(tabName) {
         // Hide all panels
@@ -295,6 +296,56 @@
         activeBtn.classList.add('active-tab', 'text-primary', 'border-primary', 'font-bold');
         activeBtn.classList.remove('text-on-surface-variant', 'border-transparent', 'font-medium');
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Check URL params for tabs
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+        if (tab && document.getElementById('tab-' + tab)) {
+            switchTab(tab);
+        }
+
+        // SweetAlert for Card Deletion
+        document.querySelectorAll('.btn-delete-card').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                Swal.fire({
+                    title: 'Remove Payment Method?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, remove it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = href;
+                    }
+                });
+            });
+        });
+
+        // SweetAlert for Account Deletion
+        const btnDeleteAccount = document.getElementById('btn-delete-account');
+        if (btnDeleteAccount) {
+            btnDeleteAccount.addEventListener('click', function(e) {
+                Swal.fire({
+                    title: 'Delete Account?',
+                    text: "This action is permanent and cannot be undone!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete account!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        btnDeleteAccount.closest('form').submit();
+                    }
+                });
+            });
+        }
+    });
 </script>
 
 </body>

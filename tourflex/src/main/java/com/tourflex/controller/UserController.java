@@ -98,7 +98,7 @@ public class UserController {
         return "login";
     }
 
-    // UNIFIED LOGIN - handles both admin and regular users
+    // USER LOGIN - handles only regular users
     @PostMapping("/login")
     public String loginUser(@RequestParam String email,
                             @RequestParam String password,
@@ -109,13 +109,7 @@ public class UserController {
             return "login";
         }
 
-        // Check admin credentials first
-        if (email.equals("admin") && password.equals("admin123")) {
-            session.setAttribute("admin", true);
-            return "redirect:/admin/dashboard";
-        }
-
-        // Regular user login
+        // Regular user login only
         User user = userService.login(email, password);
         if(user != null){
             session.setAttribute("user", user);
@@ -150,13 +144,18 @@ public class UserController {
         List<Booking> userBookings = bookingService.getBookingsByEmail(userToUse.getEmail());
         model.addAttribute("userBookings", userBookings);
 
-        // Calculate total spent
+        // Calculate total spent and trips based on payment status
+        long paidTrips = userBookings.stream()
+                .filter(b -> "Paid".equals(b.getBookingStatus()) || "Refund Requested".equals(b.getBookingStatus()))
+                .count();
+                
         double totalSpent = userBookings.stream()
-                .filter(b -> "Active".equals(b.getBookingStatus()))
+                .filter(b -> "Paid".equals(b.getBookingStatus()) || "Refund Requested".equals(b.getBookingStatus()))
                 .mapToDouble(Booking::getTotalPrice)
                 .sum();
+                
         model.addAttribute("totalSpent", totalSpent);
-        model.addAttribute("totalTrips", userBookings.size());
+        model.addAttribute("totalTrips", paidTrips);
         
         return "profile"; //html
     }
@@ -227,7 +226,7 @@ public class UserController {
     // LOGOUT
     @GetMapping("/logout")
     public String logout(HttpSession session){
-        session.invalidate();
+        session.removeAttribute("user");
         return "redirect:/";
     }
 }

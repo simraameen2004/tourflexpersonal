@@ -118,14 +118,10 @@
                 <span class="material-symbols-outlined">account_circle</span>
                 Profile
             </a>
-            <a th:if="${session.admin != null}" th:href="@{/admin/dashboard}" class="flex items-center gap-2 text-white font-label-md text-label-md hover:text-secondary-container transition-all drop-shadow-sm">
-                <span class="material-symbols-outlined">admin_panel_settings</span>
-                Admin Panel
-            </a>
-            <a th:if="${session.user == null and session.admin == null}" th:href="@{/user/register-page}" class="text-white font-label-md text-label-md hover:text-secondary-container transition-all hidden md:block drop-shadow-sm">
+            <a th:if="${session.user == null}" th:href="@{/user/register-page}" class="text-white font-label-md text-label-md hover:text-secondary-container transition-all hidden md:block drop-shadow-sm">
                 Register
             </a>
-            <a th:if="${session.user == null and session.admin == null}" th:href="@{/user/login-page}" class="flex items-center gap-2 bg-primary text-on-primary px-8 py-3 rounded-full font-label-md text-label-md hover:bg-primary-container transition-all shadow-[0_4px_14px_rgba(0,0,0,0.2)] hover:-translate-y-0.5">
+            <a th:if="${session.user == null}" th:href="@{/user/login-page}" class="flex items-center gap-2 bg-primary text-on-primary px-8 py-3 rounded-full font-label-md text-label-md hover:bg-primary-container transition-all shadow-[0_4px_14px_rgba(0,0,0,0.2)] hover:-translate-y-0.5">
                 <span class="material-symbols-outlined text-sm">login</span>
                 Login
             </a>
@@ -149,9 +145,6 @@
             <a th:href="@{/payment/list}" class="text-white/80 font-label-md text-label-md hover:text-secondary-container transition-colors duration-300">Payments</a>
         </div>
         <div class="flex items-center gap-6">
-            <a th:href="@{/}" class="text-white/80 font-label-md text-label-md hover:text-white transition-all flex items-center gap-1">
-                <span class="material-symbols-outlined text-[18px]">public</span> View Site
-            </a>
             <a th:href="@{/admin/logout}" class="bg-primary text-on-primary px-8 py-3 rounded-full font-label-md text-label-md hover:bg-primary-container transition-all shadow-[0_4px_14px_rgba(0,0,0,0.2)] hover:-translate-y-0.5">
                 Logout
             </a>

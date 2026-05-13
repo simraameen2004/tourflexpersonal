@@ -20,7 +20,14 @@ public class RefundRequestService {
 
     public RefundRequest saveRefundRequest(RefundRequest refundRequest) {
         refundRequest.setRefundStatus("Pending");
-        return refundRequestRepository.save(refundRequest);
+        RefundRequest saved = refundRequestRepository.save(refundRequest);
+        
+        Booking booking = bookingRepository.findById(refundRequest.getBookingId()).orElse(null);
+        if (booking != null) {
+            booking.setBookingStatus("Refund Requested");
+            bookingRepository.save(booking);
+        }
+        return saved;
     }
 
     public List<RefundRequest> getAllRefundRequests() {
@@ -40,7 +47,8 @@ public class RefundRequestService {
 
             Booking booking = bookingRepository.findById(refundRequest.getBookingId()).orElse(null);
             if (booking != null) {
-                booking.setRefundStatus("Completed");
+                booking.setBookingStatus("Refunded");
+                booking.setRefundStatus("Refunded");
                 bookingRepository.save(booking);
             }
         }

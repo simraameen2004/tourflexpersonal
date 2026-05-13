@@ -142,14 +142,14 @@
                             <a th:href="@{'/review/edit/' + ${r.id}}" class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center hover:bg-primary hover:text-white transition-colors shadow-sm" title="Edit">
                                 <span class="material-symbols-outlined text-[16px]">edit</span>
                             </a>
-                            <a th:href="@{'/review/delete/' + ${r.id}}" class="w-8 h-8 rounded-full bg-error-container text-on-error-container flex items-center justify-center hover:bg-error hover:text-white transition-colors shadow-sm" title="Delete" onclick="return confirm('Delete your review?');">
+                            <a th:href="@{'/review/delete/' + ${r.id}}" class="w-8 h-8 rounded-full bg-error-container text-on-error-container flex items-center justify-center hover:bg-error hover:text-white transition-colors shadow-sm btn-delete-review" title="Delete">
                                 <span class="material-symbols-outlined text-[16px]">delete</span>
                             </a>
                         </div>
                         
                         <!-- Actions for Admin -->
                         <div class="flex gap-2" th:if="${session.admin != null and session.user == null}">
-                            <a th:href="@{'/review/delete/' + ${r.id}}" class="px-3 py-1 rounded-lg bg-error-container text-on-error-container flex items-center justify-center hover:bg-error hover:text-white transition-colors shadow-sm text-xs font-bold" onclick="return confirm('Admin: Delete this review?');">
+                            <a th:href="@{'/review/delete/' + ${r.id}}" class="px-3 py-1 rounded-lg bg-error-container text-on-error-container flex items-center justify-center hover:bg-error hover:text-white transition-colors shadow-sm text-xs font-bold btn-delete-review">
                                 <span class="material-symbols-outlined text-[14px] mr-1">delete</span> Remove
                             </a>
                         </div>
@@ -164,6 +164,32 @@
 
 <!-- Footer -->
 <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.btn-delete-review').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                Swal.fire({
+                    title: 'Delete Review?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = href;
+                    }
+                });
+            });
+        });
+    });
+</script>
 
 </body>
 </html>

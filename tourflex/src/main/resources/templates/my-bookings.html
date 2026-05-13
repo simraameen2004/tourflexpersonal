@@ -41,7 +41,7 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-surface-container-low text-on-surface-variant text-label-md uppercase tracking-wider border-b border-outline-variant/30">
-                        <th class="py-4 px-6 font-bold">ID</th>
+                        <th class="py-4 px-6 font-bold">No.</th>
                         <th class="py-4 px-6 font-bold">Package</th>
                         <th class="py-4 px-6 font-bold">Location</th>
                         <th class="py-4 px-6 font-bold">Date</th>
@@ -53,48 +53,63 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-outline-variant/20">
-                    <tr th:each="b : ${bookings}" class="hover:bg-surface-container-lowest transition-colors group">
-                        <td class="py-4 px-6 text-sm font-semibold text-on-surface" th:text="${b.id}"></td>
+                    <tr th:each="b, stat : ${bookings}" class="hover:bg-surface-container-lowest transition-colors group">
+                        <td class="py-4 px-6 text-sm font-semibold text-on-surface" th:text="${stat.count}"></td>
                         <td class="py-4 px-6 text-sm font-bold text-primary" th:text="${b.packageName}"></td>
                         <td class="py-4 px-6 text-sm text-on-surface-variant" th:text="${b.location}"></td>
                         <td class="py-4 px-6 text-sm text-on-surface-variant whitespace-nowrap" th:text="${b.bookingDate}"></td>
                         <td class="py-4 px-6 text-sm text-on-surface-variant text-center" th:text="${b.numberOfPeople}"></td>
                         <td class="py-4 px-6 text-sm font-bold text-secondary-container whitespace-nowrap" th:text="'Rs. ' + ${b.totalPrice}"></td>
                         <td class="py-4 px-6 text-sm">
-                            <span th:if="${b.bookingStatus == 'Confirmed'}" class="inline-flex items-center gap-1 bg-green-100 text-green-800 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider">
-                                <span class="material-symbols-outlined text-[14px]">check_circle</span> Confirmed
+                            <span th:if="${b.bookingStatus == 'Paid'}" class="inline-flex items-center gap-1 bg-green-100 text-green-800 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider">
+                                <span class="material-symbols-outlined text-[14px]">check_circle</span> Paid
                             </span>
-                            <span th:if="${b.bookingStatus == 'Cancelled'}" class="inline-flex items-center gap-1 bg-red-100 text-red-800 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider">
-                                <span class="material-symbols-outlined text-[14px]">cancel</span> Cancelled
+                            <span th:if="${b.bookingStatus == 'Pending'}" class="inline-flex items-center gap-1 bg-yellow-100 text-yellow-800 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider">
+                                <span class="material-symbols-outlined text-[14px]">pending</span> Pending
                             </span>
-                            <span th:if="${b.bookingStatus != 'Confirmed' and b.bookingStatus != 'Cancelled'}" class="inline-flex items-center gap-1 bg-yellow-100 text-yellow-800 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider">
-                                <span class="material-symbols-outlined text-[14px]">pending</span> <span th:text="${b.bookingStatus}"></span>
+                            <span th:if="${b.bookingStatus == 'Refund Requested'}" class="inline-flex items-center gap-1 bg-orange-100 text-orange-800 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider">
+                                <span class="material-symbols-outlined text-[14px]">history</span> Requested
+                            </span>
+                            <span th:if="${b.bookingStatus == 'Refunded'}" class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider">
+                                <span class="material-symbols-outlined text-[14px]">currency_exchange</span> Refunded
+                            </span>
+                            <span th:if="${b.bookingStatus != 'Paid' and b.bookingStatus != 'Pending' and b.bookingStatus != 'Refund Requested' and b.bookingStatus != 'Refunded'}" class="inline-flex items-center gap-1 bg-surface-container-high text-on-surface px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider">
+                                <span th:text="${b.bookingStatus}"></span>
                             </span>
                         </td>
                         <td class="py-4 px-6 text-sm">
-                            <span th:if="${b.refundStatus == 'Pending'}" class="text-on-surface-variant italic text-xs">N/A</span>
-                            <span th:if="${b.refundStatus != 'Pending'}" class="font-semibold text-xs" th:text="${b.refundStatus}" th:classappend="${b.refundStatus == 'Refunded' ? 'text-green-600' : 'text-primary'}"></span>
+                            <span th:if="${b.refundStatus == 'Not Requested'}" class="text-on-surface-variant italic text-xs">N/A</span>
+                            <span th:if="${b.refundStatus != 'Not Requested'}" class="font-semibold text-xs" th:text="${b.refundStatus}" th:classappend="${b.refundStatus == 'Refunded' ? 'text-green-600' : 'text-primary'}"></span>
                         </td>
                         <td class="py-4 px-6 text-center">
                             <div class="flex flex-col gap-2 min-w-[140px]">
-                                <div th:if="${b.bookingStatus != 'Cancelled'}">
-                                    <a th:href="@{'/booking/cancel/' + ${b.id}}"
-                                       class="block w-full bg-error-container text-on-error-container py-1.5 px-3 rounded-lg text-xs font-bold hover:bg-error-container/80 transition-colors shadow-sm"
-                                       onclick="return confirm('Are you sure you want to cancel this booking?');">
-                                        Cancel Booking
+                                <!-- Action for Pending -->
+                                <div th:if="${b.bookingStatus == 'Pending'}">
+                                    <a th:href="@{'/payment/page?amount=' + ${b.totalPrice} + '&bookingId=' + ${b.id}}"
+                                       class="block w-full bg-primary text-on-primary py-1.5 px-3 rounded-lg text-xs font-bold hover:bg-primary-container transition-colors shadow-sm mb-2">
+                                        Pay Now
                                     </a>
                                 </div>
                 
-                                <div th:if="${b.bookingStatus == 'Cancelled' and b.refundStatus == 'Pending'}">
+                                <!-- Action for Paid -->
+                                <div th:if="${b.bookingStatus == 'Paid'}">
                                     <a th:href="@{'/refund/request/' + ${b.id}}" class="block w-full bg-secondary-container text-on-secondary-fixed py-1.5 px-3 rounded-lg text-xs font-bold hover:bg-secondary-fixed transition-colors shadow-sm">
                                         Claim Refund
                                     </a>
                                 </div>
                                 
-                                <div th:if="${b.bookingStatus == 'Cancelled' and b.refundStatus != 'Pending'}">
+                                <!-- Action for Refund Requested -->
+                                <div th:if="${b.bookingStatus == 'Refund Requested'}">
                                     <span class="block w-full bg-surface-container-high text-on-surface-variant py-1.5 px-3 rounded-lg text-xs font-bold opacity-70">
                                         Refund Requested
                                     </span>
+                                </div>
+                                
+                                <div th:if="${b.bookingStatus != 'Refunded' and b.bookingStatus != 'Refund Requested' and b.bookingStatus != 'Paid'}">
+                                    <a th:href="@{'/booking/cancel/' + ${b.id}}"
+                                       class="block w-full bg-error-container text-on-error-container py-1.5 px-3 rounded-lg text-xs font-bold hover:bg-error-container/80 transition-colors shadow-sm mt-1 btn-cancel-booking">
+                                        Cancel
+                                    </a>
                                 </div>
                             </div>
                         </td>
@@ -107,6 +122,32 @@
 
 <!-- Footer -->
 <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.btn-cancel-booking').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                Swal.fire({
+                    title: 'Cancel Booking?',
+                    text: "Are you sure you want to cancel this booking?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, cancel it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = href;
+                    }
+                });
+            });
+        });
+    });
+</script>
 
 </body>
 </html>

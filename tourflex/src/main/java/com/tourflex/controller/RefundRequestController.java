@@ -68,7 +68,7 @@ public class RefundRequestController {
     @GetMapping("/list")
     public String showRefundList(Model model, HttpSession session) {
         if (session.getAttribute("admin") == null) {
-            return "redirect:/user/login-page";
+            return "redirect:/admin/login";
         }
 
         model.addAttribute("refunds", refundRequestService.getAllRefundRequests());
@@ -78,7 +78,7 @@ public class RefundRequestController {
     @GetMapping("/complete/{id}")
     public String markRefundCompleted(@PathVariable int id, HttpSession session) {
         if (session.getAttribute("admin") == null) {
-            return "redirect:/user/login-page";
+            return "redirect:/admin/login";
         }
 
         refundRequestService.markRefundAsCompleted(id);

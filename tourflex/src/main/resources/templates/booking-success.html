@@ -50,7 +50,7 @@
         </div>
 
         <div class="flex flex-col gap-3">
-            <a th:href="@{'/payment/page?amount=' + ${booking.totalPrice} + '&customPackageId=' + ${customPackageId != null ? customPackageId : 0}}" class="w-full bg-secondary-container text-on-secondary-fixed py-4 rounded-xl font-label-md font-bold hover:bg-secondary-fixed transition-colors shadow-md flex justify-center items-center gap-2 group">
+            <a th:href="@{'/payment/page?amount=' + ${booking.totalPrice} + '&customPackageId=' + ${customPackageId != null ? customPackageId : 0} + '&bookingId=' + ${booking.id}}" class="w-full bg-secondary-container text-on-secondary-fixed py-4 rounded-xl font-label-md font-bold hover:bg-secondary-fixed transition-colors shadow-md flex justify-center items-center gap-2 group">
                 Proceed to Payment <span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
             </a>
             <a th:href="@{/booking/my-bookings}" class="w-full bg-surface-container-low text-on-surface-variant py-4 rounded-xl font-label-md hover:bg-surface-container-high transition-colors font-semibold border border-outline-variant/30">

@@ -52,9 +52,10 @@
             <span class="material-symbols-outlined text-[20px]">payments</span> Payments</div>
         <div onclick="switchTab('refunds')" class="sidebar-link" id="nav-refunds">
             <span class="material-symbols-outlined text-[20px]">sync_alt</span> Refunds</div>
+        <div onclick="switchTab('reviews')" class="sidebar-link" id="nav-reviews">
+            <span class="material-symbols-outlined text-[20px]">star</span> Reviews</div>
     </nav>
     <div class="px-3 py-5 border-t border-[#edf0f4] space-y-1">
-        <a th:href="@{/}" class="sidebar-link no-underline"><span class="material-symbols-outlined text-[20px]">open_in_new</span> View Site</a>
         <a th:href="@{/admin/logout}" class="sidebar-link no-underline !text-[#ef4444] hover:!bg-red-50"><span class="material-symbols-outlined text-[20px]">logout</span> Sign Out</a>
     </div>
 </aside>
@@ -63,8 +64,6 @@
 <div class="flex-1 lg:ml-[250px] min-h-screen flex flex-col">
     <header class="bg-white/80 backdrop-blur-md border-b border-[#edf0f4] sticky top-0 z-30 px-8 lg:px-10 py-5 flex items-center justify-between">
         <h1 class="text-[20px] font-semibold text-[#0f172a]" id="page-title">Dashboard</h1>
-        <a th:href="@{/}" class="hidden md:flex items-center gap-2 px-4 py-2.5 rounded-xl text-[#64748b] hover:bg-[#f1f5f9] text-[13px] font-medium border border-[#e2e8f0] no-underline">
-            <span class="material-symbols-outlined text-[16px]">open_in_new</span> View Site</a>
     </header>
 
     <main class="flex-1 px-8 lg:px-10 py-8">
@@ -148,7 +147,7 @@
                     <td><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-[#eff6ff] text-[#3b82f6] flex items-center justify-center text-[11px] font-bold" th:text="${#strings.substring(u.name,0,1)}">U</div><span class="font-semibold text-[#0f172a]" th:text="${u.name}"></span></div></td>
                     <td th:text="${u.email}"></td><td th:text="${u.phone}"></td>
                     <td class="max-w-[160px] truncate" th:text="${u.address}"></td>
-                    <td class="text-center"><a th:href="@{'/admin/users/delete/' + ${u.id}}" class="btn-danger" onclick="return confirm('Delete this user?')"><span class="material-symbols-outlined text-[18px]">delete</span></a></td>
+                    <td class="text-center"><a th:href="@{'/admin/users/delete/' + ${u.id}}" class="btn-danger btn-delete" data-type="User"><span class="material-symbols-outlined text-[18px]">delete</span></a></td>
                 </tr>
             </tbody>
         </table>
@@ -177,7 +176,7 @@
                     <td class="font-semibold !text-[#0f172a]" th:text="'Rs. ' + ${pkg.price}"></td>
                     <td><div class="flex items-center gap-1">
                         <a th:href="@{'/packages/edit/' + ${pkg.id}}" class="btn-sm !text-[#3b82f6] hover:bg-[#eff6ff]"><span class="material-symbols-outlined text-[16px]">edit</span></a>
-                        <a th:href="@{'/packages/delete/' + ${pkg.id}}" class="btn-danger" onclick="return confirm('Delete?')"><span class="material-symbols-outlined text-[18px]">delete</span></a>
+                        <a th:href="@{'/packages/delete/' + ${pkg.id}}" class="btn-danger btn-delete" data-type="Package"><span class="material-symbols-outlined text-[18px]">delete</span></a>
                     </div></td>
                 </tr>
             </tbody>
@@ -203,7 +202,7 @@
                     <td class="font-semibold !text-[#0f172a]"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px] text-[#94a3b8]">hotel</span><span th:text="${h.hotelName}"></span></div></td>
                     <td th:text="${h.location}"></td>
                     <td><span class="text-[#f59e0b] font-semibold" th:text="${h.starRating}"></span></td>
-                    <td class="text-center"><a th:href="@{'/hotel/delete/' + ${h.id}}" class="btn-danger" onclick="return confirm('Delete?')"><span class="material-symbols-outlined text-[18px]">delete</span></a></td>
+                    <td class="text-center"><a th:href="@{'/hotel/delete/' + ${h.id}}" class="btn-danger btn-delete" data-type="Hotel"><span class="material-symbols-outlined text-[18px]">delete</span></a></td>
                 </tr>
             </tbody>
         </table>
@@ -227,8 +226,8 @@
                     <td th:text="${b.location}"></td>
                     <td class="text-center" th:text="${b.numberOfPeople}"></td>
                     <td class="font-semibold !text-[#0f172a]" th:text="'Rs. ' + ${b.totalPrice}"></td>
-                    <td><span class="badge" th:classappend="${b.bookingStatus == 'Active' ? 'badge-green' : 'badge-red'}" th:text="${b.bookingStatus}"></span></td>
-                    <td class="text-center"><a th:href="@{'/booking/delete/' + ${b.id}}" class="btn-danger" onclick="return confirm('Delete?')"><span class="material-symbols-outlined text-[18px]">delete</span></a></td>
+                    <td><span class="badge" th:classappend="${b.bookingStatus == 'Paid' ? 'badge-green' : (b.bookingStatus == 'Pending' ? 'badge-yellow' : 'badge-blue')}" th:text="${b.bookingStatus}"></span></td>
+                    <td class="text-center"><a th:href="@{'/booking/delete/' + ${b.id}}" class="btn-danger btn-delete" data-type="Booking"><span class="material-symbols-outlined text-[18px]">delete</span></a></td>
                 </tr>
             </tbody>
         </table>
@@ -276,8 +275,36 @@
                     <td><span class="badge" th:classappend="${r.refundStatus == 'Completed' ? 'badge-green' : 'badge-yellow'}" th:text="${r.refundStatus}"></span></td>
                     <td class="text-center">
                         <span th:if="${r.refundStatus == 'Completed'}" class="text-[12px] font-semibold text-[#059669]">Done</span>
-                        <a th:if="${r.refundStatus != 'Completed'}" th:href="@{'/refund/complete/' + ${r.id}}" class="btn-sm btn-primary !text-[12px] no-underline" onclick="return confirm('Mark done?')">Mark Done</a>
+                        <a th:if="${r.refundStatus != 'Completed'}" th:href="@{'/refund/complete/' + ${r.id}}" class="btn-sm btn-primary !text-[12px] no-underline btn-action" data-title="Mark Refund as Done?">Mark Done</a>
                     </td>
+                </tr>
+            </tbody>
+        </table>
+    </div></div>
+</div>
+
+<!-- ==================== REVIEWS TAB ==================== -->
+<div class="tab-panel" id="tab-reviews">
+    <div class="section-header bg-gradient-to-r from-[#fdf4ff] to-[#fae8ff]">
+        <div class="icon-box bg-[#d946ef] text-white !w-10 !h-10"><span class="material-symbols-outlined text-[20px]">star</span></div>
+        <div><h2 class="!text-[#701a75]">Reviews</h2><p class="!text-[#d946ef]" th:text="${reviews != null ? reviews.size() : 0} + ' reviews'">0</p></div>
+    </div>
+    <div class="bg-white rounded-2xl border border-[#edf0f4] overflow-hidden"><div class="overflow-x-auto">
+        <table class="data-table">
+            <thead><tr><th>ID</th><th>Customer</th><th>Package</th><th>Rating</th><th>Comment</th><th>Date</th><th></th></tr></thead>
+            <tbody>
+                <tr th:each="rev : ${reviews}">
+                    <td th:text="${rev.id}" class="!text-[#94a3b8]"></td>
+                    <td><div class="font-semibold !text-[#0f172a]" th:text="${rev.customerName}"></div><div class="text-[12px] text-[#94a3b8]" th:text="${rev.customerEmail}"></div></td>
+                    <td class="font-semibold !text-[#3b82f6]" th:text="${rev.packageName}"></td>
+                    <td>
+                        <div class="flex text-[#f59e0b] text-[14px]">
+                            <span th:each="i : ${#numbers.sequence(1, 5)}" class="material-symbols-outlined" th:text="${i <= rev.rating ? 'star' : 'star_border'}">star</span>
+                        </div>
+                    </td>
+                    <td class="max-w-[200px] truncate" th:text="${rev.comment}"></td>
+                    <td class="text-[13px] text-[#94a3b8]" th:text="${rev.reviewDate}"></td>
+                    <td class="text-center"><a th:href="@{'/admin/reviews/delete/' + ${rev.id}}" class="btn-danger btn-delete" data-type="Review"><span class="material-symbols-outlined text-[18px]">delete</span></a></td>
                 </tr>
             </tbody>
         </table>
@@ -287,8 +314,10 @@
     </main>
 </div>
 
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-const titles={dashboard:'Dashboard',users:'Users',packages:'Packages',hotels:'Hotels',bookings:'Bookings',payments:'Payments',refunds:'Refunds'};
+const titles={dashboard:'Dashboard',users:'Users',packages:'Packages',hotels:'Hotels',bookings:'Bookings',payments:'Payments',refunds:'Refunds',reviews:'Reviews'};
 function switchTab(name){
     document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
     document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active'));
@@ -296,6 +325,59 @@ function switchTab(name){
     document.getElementById('nav-'+name).classList.add('active');
     document.getElementById('page-title').textContent=titles[name]||name;
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab');
+    if (tab && document.getElementById('tab-' + tab)) {
+        switchTab(tab);
+    }
+    
+    // SweetAlert for Deletions
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            const type = this.getAttribute('data-type');
+            
+            Swal.fire({
+                title: 'Delete ' + type + '?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = href;
+                }
+            });
+        });
+    });
+
+    // SweetAlert for Actions (Mark Done)
+    document.querySelectorAll('.btn-action').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            const title = this.getAttribute('data-title');
+            
+            Swal.fire({
+                title: title,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#059669',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, proceed!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = href;
+                }
+            });
+        });
+    });
+});
 </script>
 </body>
 </html>

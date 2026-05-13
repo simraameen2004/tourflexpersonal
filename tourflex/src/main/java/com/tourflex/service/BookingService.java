@@ -16,9 +16,19 @@ public class BookingService {
     private BookingRepository bookingRepository;
 
     public Booking saveBooking(Booking booking) {
-        booking.setBookingStatus("Active");
-        booking.setRefundStatus("Not Requested");
+        if (booking.getBookingStatus() == null) {
+            booking.setBookingStatus("Pending");
+            booking.setRefundStatus("Not Requested");
+        }
         return bookingRepository.save(booking);
+    }
+
+    public void updateBookingStatus(int id, String status) {
+        Booking booking = bookingRepository.findById(id).orElse(null);
+        if (booking != null) {
+            booking.setBookingStatus(status);
+            bookingRepository.save(booking);
+        }
     }
 
     public List<Booking> getAllBookings() {

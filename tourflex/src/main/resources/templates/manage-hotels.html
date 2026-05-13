@@ -45,7 +45,7 @@
                         <td class="py-4 px-6 text-sm text-secondary-container font-bold tracking-wider" th:text="${hotel.starRating}"></td>
                         <td class="py-4 px-6 text-center">
                             <a th:href="@{'/hotel/delete/' + ${hotel.id}}"
-                               onclick="return confirm('Delete this hotel? This action cannot be undone.');" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-error-container text-on-error-container hover:bg-error-container/80 transition-colors">
+                               class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-error-container text-on-error-container hover:bg-error-container/80 transition-colors btn-delete-hotel">
                                 <span class="material-symbols-outlined text-[18px]">delete</span>
                             </a>
                         </td>
@@ -59,6 +59,32 @@
 
 <!-- Footer -->
 <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.btn-delete-hotel').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                Swal.fire({
+                    title: 'Delete Hotel?',
+                    text: "This action cannot be undone!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = href;
+                    }
+                });
+            });
+        });
+    });
+</script>
 
 </body>
 </html>

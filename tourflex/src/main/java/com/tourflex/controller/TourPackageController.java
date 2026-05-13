@@ -39,7 +39,7 @@ public class TourPackageController {
                              HttpSession session) throws IOException {
 
         if (session.getAttribute("admin") == null) {
-            return "redirect:/user/login-page";
+            return "redirect:/admin/login";
         }
 
         TourPackage tourPackage = new TourPackage();
@@ -70,7 +70,7 @@ public class TourPackageController {
     @GetMapping("/add-page")
     public String showAddPackagePage(HttpSession session) {
         if (session.getAttribute("admin") == null) {
-            return "redirect:/user/login-page";
+            return "redirect:/admin/login";
         }
         return "add-package";
     }
@@ -91,7 +91,7 @@ public class TourPackageController {
     @GetMapping("/manage")
     public String managePackages(Model model, HttpSession session) {
         if (session.getAttribute("admin") == null) {
-            return "redirect:/user/login-page";
+            return "redirect:/admin/login";
         }
 
         model.addAttribute("packages", tourPackageService.getAllPackages());
@@ -101,7 +101,7 @@ public class TourPackageController {
     @GetMapping("/delete/{id}")
     public String deletePackage(@PathVariable int id, HttpSession session) {
         if (session.getAttribute("admin") == null) {
-            return "redirect:/user/login-page";
+            return "redirect:/admin/login";
         }
 
         tourPackageService.deletePackage(id);
@@ -111,7 +111,7 @@ public class TourPackageController {
     @GetMapping("/edit/{id}")
     public String showEditPackagePage(@PathVariable int id, Model model, HttpSession session) {
         if (session.getAttribute("admin") == null) {
-            return "redirect:/user/login-page";
+            return "redirect:/admin/login";
         }
 
         TourPackage tourPackage = tourPackageService.getPackageById(id);
@@ -136,7 +136,7 @@ public class TourPackageController {
                                 HttpSession session) throws IOException {
 
         if (session.getAttribute("admin") == null) {
-            return "redirect:/user/login-page";
+            return "redirect:/admin/login";
         }
 
         TourPackage existingPackage = tourPackageService.getPackageById(id);

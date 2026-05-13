@@ -101,5 +101,20 @@
 <!-- Footer -->
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var dateInput = document.querySelector('input[name="bookingDate"]');
+        if (dateInput) {
+            var today = new Date();
+            // Add 3 days to current date to restrict booking for today + 48 hours
+            today.setDate(today.getDate() + 3);
+            var yyyy = today.getFullYear();
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var dd = String(today.getDate()).padStart(2, '0');
+            dateInput.min = yyyy + '-' + mm + '-' + dd;
+        }
+    });
+</script>
+
 </body>
 </html>
