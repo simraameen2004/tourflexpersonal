@@ -132,6 +132,29 @@
     </div>
 </nav>
 
+<nav th:fragment="admin-navbar" class="absolute top-0 w-full z-50 py-8 nav-animate">
+    <div class="max-w-[1280px] w-full mx-auto px-margin-desktop flex justify-between items-center">
+        <a th:href="@{/admin/dashboard}" class="text-headline-md font-headline-md font-extrabold tracking-tight text-white no-underline drop-shadow-md">
+            TOURFLEX <span class="text-outline text-sm tracking-normal font-normal ml-2">Admin</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8 bg-white/10 backdrop-blur-md px-8 py-3 rounded-full border border-white/20 shadow-sm">
+            <a th:href="@{/admin/dashboard}" class="text-white font-label-md text-label-md hover:text-secondary-container transition-colors duration-300">Dashboard</a>
+            <a th:href="@{/packages/manage}" class="text-white/80 font-label-md text-label-md hover:text-secondary-container transition-colors duration-300">Packages</a>
+            <a th:href="@{/hotel/manage}" class="text-white/80 font-label-md text-label-md hover:text-secondary-container transition-colors duration-300">Hotels</a>
+            <a th:href="@{/booking/list}" class="text-white/80 font-label-md text-label-md hover:text-secondary-container transition-colors duration-300">Bookings</a>
+            <a th:href="@{/payment/list}" class="text-white/80 font-label-md text-label-md hover:text-secondary-container transition-colors duration-300">Payments</a>
+        </div>
+        <div class="flex items-center gap-6">
+            <a th:href="@{/}" class="text-white/80 font-label-md text-label-md hover:text-white transition-all flex items-center gap-1">
+                <span class="material-symbols-outlined text-[18px]">public</span> View Site
+            </a>
+            <a th:href="@{/admin/logout}" class="bg-primary text-on-primary px-8 py-3 rounded-full font-label-md text-label-md hover:bg-primary-container transition-all shadow-[0_4px_14px_rgba(0,0,0,0.2)] hover:-translate-y-0.5">
+                Logout
+            </a>
+        </div>
+    </div>
+</nav>
+
 <footer th:fragment="footer" class="bg-surface-container-lowest border-t border-outline-variant/30 py-margin-mobile">
     <div class="max-w-[1280px] mx-auto px-margin-desktop">
         <div class="flex flex-col md:flex-row justify-between items-center gap-8">
