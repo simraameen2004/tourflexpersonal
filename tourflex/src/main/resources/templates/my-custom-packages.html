@@ -87,8 +87,8 @@
                     <span class="material-symbols-outlined text-[16px]">lock</span> Locked
                 </span>
 
-                <!-- Delete always available -->
-                <a th:href="@{'/custom-package/delete/' + ${pkg.id}}" onclick="return confirm('Are you sure you want to delete this custom package?');" class="bg-error-container text-on-error-container p-2.5 rounded-xl hover:bg-error-container/80 transition-colors shadow-sm flex items-center justify-center">
+                <!-- Delete only available if not paid -->
+                <a th:if="${pkg.paymentStatus != 'Paid'}" th:href="@{'/custom-package/delete/' + ${pkg.id}}" onclick="return confirm('Are you sure you want to delete this custom package?');" class="bg-error-container text-on-error-container p-2.5 rounded-xl hover:bg-error-container/80 transition-colors shadow-sm flex items-center justify-center">
                     <span class="material-symbols-outlined">delete</span>
                 </a>
             </div>

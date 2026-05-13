@@ -7,8 +7,12 @@
 <!-- TopNavBar -->
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<div class="flex-1 flex items-center justify-center py-24 px-margin-mobile">
-    <div class="w-full max-w-xl bg-white p-8 md:p-12 rounded-3xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-outline-variant/20 mt-12 text-center">
+<div class="bg-primary pt-24 pb-32">
+    <!-- Background Header space for navbar -->
+</div>
+
+<main class="flex-1 max-w-[1280px] mx-auto px-margin-desktop w-full -mt-24 mb-16 relative z-10 flex items-center justify-center">
+    <div class="w-full max-w-xl bg-white p-8 md:p-12 rounded-3xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-outline-variant/20 text-center">
         
         <div class="w-24 h-24 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-6 shadow-md border-4 border-blue-50">
             <span class="material-symbols-outlined text-[50px]">currency_exchange</span>
@@ -22,7 +26,7 @@
         </a>
         
     </div>
-</div>
+</main>
 
 <!-- Footer -->
 <footer th:replace="~{fragments/layout :: footer}"></footer>

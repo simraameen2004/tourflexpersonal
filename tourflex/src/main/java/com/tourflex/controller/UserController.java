@@ -1,6 +1,8 @@
 package com.tourflex.controller;
 
+import com.tourflex.model.SavedCard;
 import com.tourflex.model.User;
+import com.tourflex.service.SavedCardService;
 import com.tourflex.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private SavedCardService savedCardService;
 
     // REGISTER PAGE
     @GetMapping("/register-page")
@@ -117,12 +122,17 @@ public class UserController {
         }
         // Refresh user from DB to get latest data
         Optional<User> freshUser = userService.findById(loggedInUser.getId());
+        User userToUse;
         if (freshUser.isPresent()) {
             session.setAttribute("user", freshUser.get());
-            model.addAttribute("user", freshUser.get());
+            userToUse = freshUser.get();
         } else {
-            model.addAttribute("user", loggedInUser);
+            userToUse = loggedInUser;
         }
+        
+        model.addAttribute("user", userToUse);
+        model.addAttribute("savedCards", savedCardService.getCardsByEmail(userToUse.getEmail()));
+        
         return "profile"; //html
     }
 

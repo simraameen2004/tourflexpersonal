@@ -7,8 +7,12 @@
 <!-- TopNavBar -->
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<div class="flex-1 flex items-center justify-center py-24 px-margin-mobile">
-    <div class="w-full max-w-xl bg-white p-8 md:p-12 rounded-3xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-outline-variant/20 mt-12 text-center">
+<div class="bg-primary pt-24 pb-32">
+    <!-- Background Header space for navbar -->
+</div>
+
+<main class="flex-1 max-w-[1280px] mx-auto px-margin-desktop w-full -mt-24 mb-16 relative z-10 flex items-center justify-center">
+    <div class="w-full max-w-xl bg-white p-8 md:p-12 rounded-3xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-outline-variant/20 text-center">
         
         <div class="w-20 h-20 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-6 shadow-sm border border-green-200">
             <span class="material-symbols-outlined text-[40px]">task_alt</span>
@@ -55,7 +59,7 @@
         </div>
         
     </div>
-</div>
+</main>
 
 <!-- Footer -->
 <footer th:replace="~{fragments/layout :: footer}"></footer>
