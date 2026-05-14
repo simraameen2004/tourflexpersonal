@@ -114,7 +114,7 @@ public class BookingController {
         }
 
         bookingService.deleteBooking(id);
-        return "redirect:/booking/list";
+        return "redirect:/admin/dashboard?tab=bookings";
     }
 
     // LOGGED-IN USER SEES THEIR OWN BOOKINGS AUTOMATICALLY

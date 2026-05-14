@@ -63,6 +63,9 @@
         <button onclick="switchTab('bookings')" id="tab-bookings" class="tab-btn px-6 py-4 text-sm font-medium text-on-surface-variant border-b-2 border-transparent whitespace-nowrap flex items-center gap-2 hover:text-primary transition-all">
             <span class="material-symbols-outlined text-[18px]">book_online</span> Booking History
         </button>
+        <button onclick="switchTab('reviews')" id="tab-reviews" class="tab-btn px-6 py-4 text-sm font-medium text-on-surface-variant border-b-2 border-transparent whitespace-nowrap flex items-center gap-2 hover:text-primary transition-all">
+            <span class="material-symbols-outlined text-[18px]">star</span> My Reviews
+        </button>
         <button onclick="switchTab('settings')" id="tab-settings" class="tab-btn px-6 py-4 text-sm font-medium text-on-surface-variant border-b-2 border-transparent whitespace-nowrap flex items-center gap-2 hover:text-primary transition-all">
             <span class="material-symbols-outlined text-[18px]">settings</span> Account
         </button>
@@ -245,6 +248,44 @@
         </div>
     </div>
 
+    <!-- Tab: My Reviews -->
+    <div id="panel-reviews" class="tab-panel hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-outline-variant/20 overflow-hidden">
+            <div class="px-8 py-5 border-b border-outline-variant/20 flex items-center justify-between">
+                <h2 class="text-headline-sm font-bold text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">star</span> My Reviews
+                </h2>
+                <a th:href="@{/review/add-page}" class="text-xs font-bold text-primary hover:underline">Write a Review →</a>
+            </div>
+            <div th:if="${userReviews == null or userReviews.isEmpty()}" class="p-12 text-center">
+                <span class="material-symbols-outlined text-outline text-5xl mb-3">reviews</span>
+                <h3 class="text-headline-sm font-bold text-on-surface mb-2">No reviews yet</h3>
+                <p class="text-body-md text-on-surface-variant mb-4">Share your experiences and help other travelers!</p>
+            </div>
+            <div th:if="${userReviews != null and !userReviews.isEmpty()}" class="divide-y divide-outline-variant/20">
+                <div th:each="r : ${userReviews}" class="px-8 py-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4 hover:bg-surface-container-lowest transition-colors">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-1 text-secondary-container mb-1">
+                            <span class="material-symbols-outlined text-[14px] filled" th:each="i : ${#numbers.sequence(1, r.rating)}">star</span>
+                            <span class="material-symbols-outlined text-[14px] text-outline-variant" th:if="${r.rating < 5}" th:each="i : ${#numbers.sequence(r.rating + 1, 5)}">star</span>
+                        </div>
+                        <div class="text-sm font-bold text-on-surface" th:text="${r.packageName}">Package</div>
+                        <p class="text-xs text-on-surface-variant italic mt-2" th:text="${r.comment}">Comment</p>
+                        <div class="text-[10px] text-outline mt-2" th:text="${r.reviewDate}">Date</div>
+                    </div>
+                    <div class="flex items-center gap-2 sm:shrink-0 mt-3 sm:mt-0">
+                        <a th:href="@{'/review/edit/' + ${r.id}}" class="px-3 py-1.5 rounded-lg bg-surface-container-high text-on-surface flex items-center justify-center hover:bg-primary hover:text-white transition-colors shadow-sm text-xs font-bold">
+                            <span class="material-symbols-outlined text-[14px] mr-1">edit</span> Edit
+                        </a>
+                        <a th:href="@{'/review/delete/' + ${r.id}}" class="px-3 py-1.5 rounded-lg bg-error-container text-on-error-container flex items-center justify-center hover:bg-error hover:text-white transition-colors shadow-sm text-xs font-bold btn-delete-review">
+                            <span class="material-symbols-outlined text-[14px] mr-1">delete</span> Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Tab: Account Settings -->
     <div id="panel-settings" class="tab-panel hidden">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -345,6 +386,27 @@
                 });
             });
         }
+        // SweetAlert for Review Deletion
+        document.querySelectorAll('.btn-delete-review').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                Swal.fire({
+                    title: 'Delete Review?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = href;
+                    }
+                });
+            });
+        });
+
     });
 </script>
 

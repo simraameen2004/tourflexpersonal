@@ -64,7 +64,7 @@ public class TourPackageController {
         }
 
         tourPackageService.savePackageOnly(tourPackage);
-        return "redirect:/packages/manage";
+        return "redirect:/admin/dashboard?tab=packages";
     }
 
     @GetMapping("/add-page")
@@ -105,7 +105,7 @@ public class TourPackageController {
         }
 
         tourPackageService.deletePackage(id);
-        return "redirect:/packages/manage";
+        return "redirect:/admin/dashboard?tab=packages";
     }
 
     @GetMapping("/edit/{id}")
@@ -142,7 +142,7 @@ public class TourPackageController {
         TourPackage existingPackage = tourPackageService.getPackageById(id);
 
         if (existingPackage == null) {
-            return "redirect:/packages/manage";
+            return "redirect:/admin/dashboard?tab=packages";
         }
 
         existingPackage.setName(name);
@@ -166,6 +166,6 @@ public class TourPackageController {
         }
 
         tourPackageService.savePackageOnly(existingPackage);
-        return "redirect:/packages/manage";
+        return "redirect:/admin/dashboard?tab=packages";
     }
 }

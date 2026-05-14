@@ -29,17 +29,11 @@ public class ReviewService {
         return reviewRepository.findAllByOrderByReviewDateAsc();
     }
 
-    public List<Review> getReviewsByPackage(String packageName, String sort) {
-        // Only consider the first 4 characters for matching as per requirement
-        String searchPrefix = packageName;
-        if (packageName != null && packageName.length() > 4) {
-            searchPrefix = packageName.substring(0, 4);
-        }
-
+    public List<Review> searchReviews(String keyword, String sort) {
         if ("oldest".equals(sort)) {
-            return reviewRepository.findByPackageNameStartingWithIgnoreCaseOrderByReviewDateAsc(searchPrefix);
+            return reviewRepository.findByPackageNameContainingIgnoreCaseOrCustomerNameContainingIgnoreCaseOrderByReviewDateAsc(keyword, keyword);
         }
-        return reviewRepository.findByPackageNameStartingWithIgnoreCaseOrderByReviewDateDesc(searchPrefix);
+        return reviewRepository.findByPackageNameContainingIgnoreCaseOrCustomerNameContainingIgnoreCaseOrderByReviewDateDesc(keyword, keyword);
     }
 
     public void deleteReview(int id) {

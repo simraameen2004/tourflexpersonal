@@ -64,10 +64,7 @@ public class AdminController {
         }
 
         // Stats
-        long paidBookingsCount = bookingService.getAllBookings().stream()
-                .filter(b -> "Paid".equals(b.getBookingStatus()) || "Refund Requested".equals(b.getBookingStatus()))
-                .count();
-        model.addAttribute("totalBookings", paidBookingsCount);
+        model.addAttribute("totalBookings", bookingService.getAllBookings().size());
         
         model.addAttribute("totalPayments", paymentService.getAllPayments().size());
         model.addAttribute("totalRefunds", refundRequestService.getAllRefundRequests().size());
@@ -110,7 +107,7 @@ public class AdminController {
             return "redirect:/admin/login";
         }
         userService.deleteUser(id);
-        return "redirect:/admin/dashboard";
+        return "redirect:/admin/dashboard?tab=users";
     }
 
     @GetMapping("/reviews/delete/{id}")

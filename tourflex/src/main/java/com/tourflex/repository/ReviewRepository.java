@@ -11,7 +11,7 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
     List<Review> findAllByOrderByReviewDateAsc();
 
-    List<Review> findByPackageNameStartingWithIgnoreCaseOrderByReviewDateDesc(String packageName);
+    List<Review> findByPackageNameContainingIgnoreCaseOrCustomerNameContainingIgnoreCaseOrderByReviewDateDesc(String packageName, String customerName);
 
-    List<Review> findByPackageNameStartingWithIgnoreCaseOrderByReviewDateAsc(String packageName);
+    List<Review> findByPackageNameContainingIgnoreCaseOrCustomerNameContainingIgnoreCaseOrderByReviewDateAsc(String packageName, String customerName);
 }

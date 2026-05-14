@@ -25,14 +25,14 @@ public class ReviewController {
 
     @GetMapping("/add-page")
     public String showReviewPage(@RequestParam(required = false) String sort,
-                                 @RequestParam(required = false) String pkg,
+                                 @RequestParam(required = false) String search,
                                  HttpSession session,
                                  Model model) {
 
         List<Review> reviews;
 
-        if (pkg != null && !pkg.isEmpty()) {
-            reviews = reviewService.getReviewsByPackage(pkg, sort);
+        if (search != null && !search.trim().isEmpty()) {
+            reviews = reviewService.searchReviews(search.trim(), sort);
         } else if ("latest".equals(sort)) {
             reviews = reviewService.getLatestReviews();
         } else if ("oldest".equals(sort)) {
@@ -45,7 +45,7 @@ public class ReviewController {
         model.addAttribute("reviews", reviews);
         model.addAttribute("packages", tourPackageService.getAllPackages());
         model.addAttribute("currentSort", sort);
-        model.addAttribute("currentPkg", pkg);
+        model.addAttribute("currentSearch", search);
         return "review";
     }
 

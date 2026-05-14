@@ -21,8 +21,8 @@
         <!-- Left Column: Add Review & Filter -->
         <div class="lg:col-span-1 space-y-8">
             
-            <!-- Add Review Form (Hidden for Admins) -->
-            <div th:if="${session.admin == null}" class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-outline-variant/20">
+            <!-- Add Review Form (Visible only for Users) -->
+            <div th:if="${session.user != null}" class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-outline-variant/20">
                 <h2 class="text-headline-sm text-primary mb-6 flex items-center gap-2">
                     <span class="material-symbols-outlined text-secondary-container">rate_review</span> Write a Review
                 </h2>
@@ -34,15 +34,18 @@
                 <form action="/review/save" method="post" class="flex flex-col gap-4">
                     <div>
                         <label class="block text-[12px] uppercase tracking-wider text-on-surface-variant font-bold mb-1 ml-1">Name</label>
-                        <input type="text" name="customerName" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary outline-none transition-all text-sm" placeholder="Your Name" required th:value="${session.user != null ? session.user.name : ''}">
+                        <input type="text" name="customerName" class="w-full bg-surface-container-low text-on-surface-variant border border-outline-variant/50 rounded-xl px-4 py-2.5 outline-none text-sm cursor-not-allowed" readonly th:value="${session.user.name}">
                     </div>
                     <div>
                         <label class="block text-[12px] uppercase tracking-wider text-on-surface-variant font-bold mb-1 ml-1">Email</label>
-                        <input type="email" name="customerEmail" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary outline-none transition-all text-sm" placeholder="Your Email" required th:value="${session.user != null ? session.user.email : ''}">
+                        <input type="email" name="customerEmail" class="w-full bg-surface-container-low text-on-surface-variant border border-outline-variant/50 rounded-xl px-4 py-2.5 outline-none text-sm cursor-not-allowed" readonly th:value="${session.user.email}">
                     </div>
                     <div>
-                        <label class="block text-[12px] uppercase tracking-wider text-on-surface-variant font-bold mb-1 ml-1">Package / Location</label>
-                        <input type="text" name="packageName" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary outline-none transition-all text-sm" placeholder="E.g. Ella Getaway" required>
+                        <label class="block text-[12px] uppercase tracking-wider text-on-surface-variant font-bold mb-1 ml-1">Destination / Package</label>
+                        <input type="text" name="packageName" list="packagesList" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary outline-none transition-all text-sm" placeholder="Type or select a destination..." required>
+                        <datalist id="packagesList">
+                            <option th:each="p : ${packages}" th:value="${p.name}"></option>
+                        </datalist>
                     </div>
                     <div>
                         <label class="block text-[12px] uppercase tracking-wider text-on-surface-variant font-bold mb-1 ml-1">Rating</label>
@@ -64,6 +67,16 @@
                     </button>
                 </form>
             </div>
+            
+            <!-- Login Prompt for Guests -->
+            <div th:if="${session.user == null and session.admin == null}" class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-outline-variant/20 text-center">
+                <span class="material-symbols-outlined text-4xl text-outline mb-2">rate_review</span>
+                <h3 class="text-headline-sm font-bold text-on-surface mb-2">Write a Review</h3>
+                <p class="text-body-sm text-on-surface-variant mb-6">Join our community to share your experiences and help others discover the best of Sri Lanka.</p>
+                <a th:href="@{/user/login-page}" class="inline-block w-full bg-primary text-on-primary py-3 rounded-xl font-label-md font-bold hover:bg-primary-container transition-colors shadow-sm">
+                    Log In to Review
+                </a>
+            </div>
 
             <!-- Filter Box -->
             <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
@@ -79,13 +92,7 @@
                         </select>
                     </div>
                     <div>
-                        <select name="pkg" class="w-full bg-white border border-outline-variant/50 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-secondary-container">
-                            <option value="" th:selected="${currentPkg == null or currentPkg == ''}">All Destinations</option>
-                            <option th:each="p : ${packages}" 
-                                    th:value="${p.name}" 
-                                    th:text="${p.name}"
-                                    th:selected="${currentPkg == p.name}">Package Name</option>
-                        </select>
+                        <input type="text" name="search" th:value="${currentSearch}" placeholder="Search by name or destination..." class="w-full bg-white border border-outline-variant/50 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-secondary-container">
                     </div>
                     <button type="submit" class="w-full bg-surface-container-high text-on-surface py-2 rounded-lg text-sm font-bold hover:bg-surface-container-highest transition-colors">
                         Apply Filter

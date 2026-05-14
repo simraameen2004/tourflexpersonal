@@ -32,6 +32,9 @@ public class UserController {
     @Autowired
     private BookingService bookingService;
 
+    @Autowired
+    private com.tourflex.service.ReviewService reviewService;
+
     // REGISTER PAGE
     @GetMapping("/register-page")
     public String showRegisterPage() {
@@ -156,6 +159,11 @@ public class UserController {
                 
         model.addAttribute("totalSpent", totalSpent);
         model.addAttribute("totalTrips", paidTrips);
+        
+        List<com.tourflex.model.Review> userReviews = reviewService.getAllReviews().stream()
+                .filter(r -> r.getCustomerEmail().equals(userToUse.getEmail()))
+                .toList();
+        model.addAttribute("userReviews", userReviews);
         
         return "profile"; //html
     }

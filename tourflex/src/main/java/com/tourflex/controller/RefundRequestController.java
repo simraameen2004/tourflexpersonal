@@ -82,6 +82,6 @@ public class RefundRequestController {
         }
 
         refundRequestService.markRefundAsCompleted(id);
-        return "redirect:/refund/list";
+        return "redirect:/admin/dashboard?tab=refunds";
     }
 }
